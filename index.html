@@ -34,6 +34,8 @@
   --danger:#ff5470;
   --success:#4ee3a3;
   --present: #fbbf24;
+  --correct: #22c55e;
+  --absent: #3a4155;
   --radius-xl:28px;
   --radius-lg:22px;
   --radius-md:16px;
@@ -129,7 +131,13 @@ button{ font-family:inherit; }
 .chat-container{ width:100%; height:100%; max-width:720px; margin:0 auto; display:flex; flex-direction:column; }
 .chat-header{ display:flex; align-items:center; gap:12px; padding:16px 18px; border-bottom:1px solid var(--glass-border-soft); background:rgba(255,255,255,.02); }
 .chat-header .who{ flex:1; min-width:0; }
-.chat-header .who h3{ margin:0; font-size:15px; } .chat-header .who p{ margin:2px 0 0; font-size:12px; color:var(--text-muted); }
+.chat-header .who h3{ margin:0; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .chat-header .who p{ margin:2px 0 0; font-size:12px; color:var(--text-muted); }
+.room-id-bar{ display:flex; align-items:center; gap:8px; padding:8px 18px; font-size:12.5px; color:var(--text-secondary); background:rgba(255,255,255,.03); border-bottom:1px solid var(--glass-border-soft); }
+.room-id-bar.hidden{ display:none; }
+.room-id-bar #room-id-text{ font-family:var(--font-mono); letter-spacing:.02em; overflow-x:auto; white-space:nowrap; flex:1; min-width:0; }
+.room-id-copy{ appearance:none; border:1px solid var(--glass-border); background:var(--glass-strong); color:var(--text-primary); border-radius:8px; padding:5px 9px; cursor:pointer; display:flex; align-items:center; font-size:13px; flex-shrink:0; transition:background .2s, transform .2s; }
+.room-id-copy:hover{ background:var(--accent); color:#04070d; }
+.room-id-copy:active{ transform:scale(.92); }
 .status-dot{ width:8px; height:8px; border-radius:50%; background:var(--success); box-shadow:0 0 8px var(--success); display:inline-block; margin-right:5px; }
 .status-dot.off{ background:var(--danger); box-shadow:0 0 8px var(--danger); }
 
@@ -229,7 +237,7 @@ button{ font-family:inherit; }
 .g-tile.flip .g-tile-inner { transform: rotateX(180deg); }
 .g-tile-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900; border-radius: 10px; border: 2px solid var(--glass-border); background: var(--glass); }
 .g-tile-back { transform: rotateX(180deg); color: #000; border: none; }
-.g-tile-back.correct { background: var(--correct); box-shadow: 0 0 15px rgba(78, 227, 163, 0.5); }
+.g-tile-back.correct { background: var(--correct); color: #fff; box-shadow: 0 0 15px rgba(34, 197, 94, 0.6); }
 .g-tile-back.present { background: var(--present); box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
 .g-tile-back.absent { background: var(--absent); color: #fff; box-shadow: 0 0 15px rgba(255, 84, 112, 0.5); }
 .g-dup-badge { position: absolute; top: -2px; right: 2px; font-size: 14px; font-weight: 900; color: #000; text-shadow: 0 0 5px rgba(255,255,255,0.8); }
@@ -241,7 +249,7 @@ button{ font-family:inherit; }
 .g-key { flex: 1; height: 45px; min-width: 0; background: var(--glass-strong); border: 1px solid var(--glass-border); color: var(--text-primary); border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
 .g-key.large { flex: 1.5; font-size: 12px; background: rgba(255,255,255,0.1); }
 .g-key:active { transform: scale(0.92); }
-.g-key.correct { background: var(--correct); color: #000; border-color: var(--correct); }
+.g-key.correct { background: var(--correct); color: #fff; border-color: var(--correct); }
 .g-key.present { background: var(--present); color: #000; border-color: var(--present); }
 .g-key.absent { background: var(--absent); color: #fff; border-color: var(--absent); opacity: 0.6; }
 
@@ -325,6 +333,12 @@ button{ font-family:inherit; }
           <p id="chat-subtitle"><span class="status-dot" id="chat-status-dot"></span><span id="chat-status-text">Online</span></p>
         </div>
         <div class="icon-btn" id="btn-sticker-studio" title="Sticker Studio"><i class="ph ph-scissors"></i></div>
+      </div>
+
+      <div class="room-id-bar hidden" id="room-id-bar">
+        <i class="ph ph-hash"></i>
+        <span id="room-id-text"></span>
+        <button class="room-id-copy" id="btn-copy-room-id" title="Copy Room ID"><i class="ph ph-copy"></i></button>
       </div>
 
       <div class="messages" id="messages"></div>
@@ -597,6 +611,14 @@ function showScreen(id){
   const target = document.getElementById(id);
   if(target) target.classList.add('active');
   if(id === 'screen-hockey-game') hockeyResize();
+  // The user chip / settings button is a fixed overlay meant only for the
+  // main menu screens. Hide it everywhere else so it never covers the
+  // chat header's back button or room ID.
+  const chipScreens = ['screen-mode', 'screen-p2p-setup'];
+  const chip = $('#top-controls');
+  if(chip && profile.username){
+    chip.classList.toggle('hidden', !chipScreens.includes(id));
+  }
 }
 
 $all('[data-back]').forEach(el => {
@@ -677,6 +699,7 @@ $('#settings-delete-data').addEventListener('click', () => {
 $('#mode-ai').addEventListener('click', () => {
   mode = 'ai'; teardownConnection();
   $('#chat-title').textContent = 'MORHAF Intelligence AI'; $('#chat-status-text').textContent = 'Online'; $('#chat-status-dot').classList.remove('off');
+  $('#room-id-bar').classList.add('hidden');
   remoteName = 'الذكاء الاصطناعي';
   aiHistory = loadJSON('mai_ai_chat', []);
   currentMessages = aiHistory.filter(m => m.role !== 'system').map(m => ({
@@ -695,23 +718,49 @@ $('#room-form').addEventListener('submit', (e) => { e.preventDefault(); const va
 
 function safePeerId(room){ return 'mai-room-' + room.replace(/[^a-zA-Z0-9_-]/g, '_'); }
 
+// A richer ICE server list (STUN + a couple of open TURN relays) speeds up
+// NAT traversal considerably vs. relying on PeerJS's default single STUN
+// server, which is the main cause of "slow to join" symptoms.
+const ICE_CONFIG = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:global.stun.twilio.com:3478' },
+    { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+    { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' }
+  ]
+};
+const PEER_OPTS = { debug: 0, config: ICE_CONFIG };
+const CONNECT_TIMEOUT_MS = 12000;
+let connectTimeoutRef = null;
+
+function clearConnectTimeout(){ if(connectTimeoutRef){ clearTimeout(connectTimeoutRef); connectTimeoutRef = null; } }
+
+function armConnectTimeout(onTimeout){
+  clearConnectTimeout();
+  connectTimeoutRef = setTimeout(() => { if(!peerReady) onTimeout(); }, CONNECT_TIMEOUT_MS);
+}
+
 function connectToRoom(room){
   roomId = room; mode = 'p2p'; $('#room-status').textContent = 'Connecting…';
-  const pid = safePeerId(room); peer = new Peer(pid, { debug: 0 });
-  peer.on('open', () => { isChatHost = true; peerReady = true; enterP2PChat(true); });
-  peer.on('error', (err) => { if(err.type === 'unavailable-id') joinAsGuest(pid); else $('#room-status').textContent = 'Error: ' + err.type; });
+  const pid = safePeerId(room); peer = new Peer(pid, PEER_OPTS);
+  armConnectTimeout(() => { $('#room-status').textContent = 'يستغرق الأمر وقتًا أطول من المعتاد… تأكد من الاتصال بالإنترنت.'; });
+  peer.on('open', () => { clearConnectTimeout(); isChatHost = true; peerReady = true; enterP2PChat(true); });
+  peer.on('error', (err) => { if(err.type === 'unavailable-id') joinAsGuest(pid); else { clearConnectTimeout(); $('#room-status').textContent = 'Error: ' + err.type; } });
   peer.on('connection', (c) => { conn = c; bindConnection(); });
 }
 
 function joinAsGuest(hostId){
-  if(peer) peer.destroy(); peer = new Peer(undefined, { debug: 0 });
+  if(peer) peer.destroy(); peer = new Peer(undefined, PEER_OPTS);
+  armConnectTimeout(() => { $('#room-status').textContent = 'يستغرق الأمر وقتًا أطول من المعتاد… تأكد من رمز الغرفة والاتصال بالإنترنت.'; });
   peer.on('open', () => { isChatHost = false; conn = peer.connect(hostId, { reliable:true }); bindConnection(); });
-  peer.on('error', (err) => { $('#room-status').textContent = 'Error: ' + err.type; });
+  peer.on('error', (err) => { clearConnectTimeout(); $('#room-status').textContent = 'Error: ' + err.type; });
 }
 
 function bindConnection(){
   conn.on('open', () => { 
-      peerReady = true; updateP2PStatus(true); enterP2PChat(isChatHost); 
+      clearConnectTimeout(); peerReady = true; updateP2PStatus(true); enterP2PChat(isChatHost); 
       sendData({ type: 'name_sync', name: profile.username });
   });
   conn.on('data', handleIncomingData);
@@ -727,12 +776,26 @@ function updateP2PStatus(online){
 }
 
 function enterP2PChat(hosting){
-  $('#chat-title').textContent = 'Room ID: ' + roomId;
+  $('#chat-title').textContent = remoteName !== "الخصم" ? remoteName : 'Room Chat';
+  $('#room-id-bar').classList.remove('hidden');
+  $('#room-id-text').textContent = roomId;
   updateP2PStatus(!!conn && conn.open);
   currentMessages = loadJSON('mai_room_' + roomId, []);
   renderAllMessages(); showScreen('screen-chat');
   if(hosting) { setTimeout(() => { if(!peerReady) $('#chat-status-text').textContent = 'Waiting for peer...'; }, 300); }
 }
+
+$('#btn-copy-room-id').addEventListener('click', async () => {
+  if(!roomId) return;
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(roomId);
+    else{
+      const ta = document.createElement('textarea'); ta.value = roomId; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    }
+    showToast('تم نسخ رمز الغرفة');
+  }catch(e){ showToast('فشل النسخ', true); }
+});
 
 function sendData(obj){ if(conn && conn.open) conn.send(obj); }
 
@@ -1230,6 +1293,8 @@ function hockeyUpdateMyPos(clientX, clientY) {
 hCanvas.addEventListener('mousemove', (e) => hockeyUpdateMyPos(e.clientX, e.clientY));
 hCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); hockeyUpdateMyPos(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
 
+// Runs on the HOST only: converts the guest's raw local touch coordinates
+// (sent as-is from the guest's own screen) into the host's coordinate frame.
 function hockeyUpdateGuestPaddle(x, y) { hockeyState.p2.x = hCanvas.width - x; hockeyState.p2.y = hCanvas.height - y; }
 function hockeyResetPuck() { hockeyState.puck.x = hCanvas.width / 2; hockeyState.puck.y = hCanvas.height / 2; hockeyState.puck.vx = 0; hockeyState.puck.vy = 0; }
 
@@ -1282,8 +1347,21 @@ function hockeyAI() {
     if (aiPaddle.x < aiPaddle.radius) aiPaddle.x = aiPaddle.radius; if (aiPaddle.x > hCanvas.width - aiPaddle.radius) aiPaddle.x = hCanvas.width - aiPaddle.radius;
 }
 
+// Runs on the GUEST only. The host always sends state expressed in ITS OWN
+// local frame. To make the guest's screen show "my paddle at the bottom,
+// opponent at the top" — exactly like the host sees it on their own side —
+// every synced entity (host's paddle, puck, boosts) must be mirrored into
+// the guest's local frame. The guest's OWN paddle (p2.x/p2.y) is never
+// touched here: it already lives in local coordinates because it's driven
+// directly by the guest's own touch/mouse input.
 function hockeyUpdateState(state) {
-    hockeyState.score1 = state.score1; hockeyState.score2 = state.score2; hockeyState.puck = state.puck; hockeyState.boosts = state.boosts;
+    hockeyState.score1 = state.score1; hockeyState.score2 = state.score2;
+    hockeyState.puck = {
+        ...state.puck,
+        x: hCanvas.width - state.puck.x,
+        y: hCanvas.height - state.puck.y
+    };
+    hockeyState.boosts = state.boosts.map(b => ({ ...b, x: hCanvas.width - b.x, y: hCanvas.height - b.y }));
     hockeyState.p1.x = hCanvas.width - state.p1.x; hockeyState.p1.y = hCanvas.height - state.p1.y;
     hockeyState.p1.radius = state.p1.radius; hockeyState.p2.radius = state.p2.radius;
 }
@@ -1300,22 +1378,22 @@ function hockeyRenderLoop() {
     hCtx.fillStyle = 'rgba(255, 84, 112, 0.15)'; hCtx.fillRect(gl, 0, 140, 20);
     hCtx.fillStyle = 'rgba(57, 240, 214, 0.15)'; hCtx.fillRect(gl, hCanvas.height - 20, 140, 20);
     
-    let isP1 = (mode === 'ai' || isGameHost);
-    if (isP1) { if (mode === 'ai') hockeyAI(); hockeyUpdatePhysics(); if (mode === 'p2p') sendData({ type: 'hockey_state', state: hockeyState }); }
+    // "isHostRole" only decides who owns the authoritative physics/AI step
+    // and broadcasts state — it must NOT be used to flip coordinates again
+    // at render time. hockeyState is already expressed in this client's own
+    // local frame at all times (host: naturally so; guest: normalized inside
+    // hockeyUpdateState + its own locally-driven p2), so we simply draw it.
+    let isHostRole = (mode === 'ai' || isGameHost);
+    if (isHostRole) { if (mode === 'ai') hockeyAI(); hockeyUpdatePhysics(); if (mode === 'p2p') sendData({ type: 'hockey_state', state: hockeyState }); }
 
     hockeyState.boosts.forEach(b => {
         const color = b.type === 'speed' ? '#7c6bff' : '#4ee3a3';
-        const bx = isP1 ? b.x : hCanvas.width - b.x; const by = isP1 ? b.y : hCanvas.height - b.y;
-        hockeyDrawNeonCircle(bx, by, b.radius, color, 15);
+        hockeyDrawNeonCircle(b.x, b.y, b.radius, color, 15);
     });
 
-    let p1X = isP1 ? hockeyState.p1.x : hCanvas.width - hockeyState.p1.x; let p1Y = isP1 ? hockeyState.p1.y : hCanvas.height - hockeyState.p1.y;
-    let p2X = isP1 ? hockeyState.p2.x : hCanvas.width - hockeyState.p2.x; let p2Y = isP1 ? hockeyState.p2.y : hCanvas.height - hockeyState.p2.y;
-    let puckX = isP1 ? hockeyState.puck.x : hCanvas.width - hockeyState.puck.x; let puckY = isP1 ? hockeyState.puck.y : hCanvas.height - hockeyState.puck.y;
-
-    hockeyDrawNeonCircle(p1X, p1Y, hockeyState.p1.radius, hockeyState.p1.color, 25);
-    hockeyDrawNeonCircle(p2X, p2Y, hockeyState.p2.radius, hockeyState.p2.color, 25);
-    hockeyDrawNeonCircle(puckX, puckY, hockeyState.puck.radius, '#ffffff', 30);
+    hockeyDrawNeonCircle(hockeyState.p1.x, hockeyState.p1.y, hockeyState.p1.radius, hockeyState.p1.color, 25);
+    hockeyDrawNeonCircle(hockeyState.p2.x, hockeyState.p2.y, hockeyState.p2.radius, hockeyState.p2.color, 25);
+    hockeyDrawNeonCircle(hockeyState.puck.x, hockeyState.puck.y, hockeyState.puck.radius, '#ffffff', 30);
 
     $('#hk-score1').innerText = hockeyState.score1; $('#hk-score2').innerText = hockeyState.score2;
     hockeyLoopRef = requestAnimationFrame(hockeyRenderLoop);
