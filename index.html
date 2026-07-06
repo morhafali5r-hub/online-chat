@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>MORHAF Intelligence - Chat & Games</title>
+<title>MORHAF Intelligence · Chat & Games</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -706,7 +706,11 @@ $('#mode-p2p').addEventListener('click', () => showScreen('screen-p2p-setup'));
 /* ============================================================
    P2P NETWORKING (MODIFIED FOR BETTER INTERNATIONAL CONNECTIVITY)
    ============================================================ */
-$('#btn-create-room').addEventListener('click', () => { connectToRoom('mai-' + Math.random().toString(36).substring(2, 8).toUpperCase()); });
+$('#btn-create-room').addEventListener('click', () => { 
+  // Generate a random 6-character ID
+  const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+  connectToRoom('mai-' + randomStr); 
+});
 $('#room-form').addEventListener('submit', (e) => { e.preventDefault(); const val = $('#room-input').value.trim(); if(val) connectToRoom(val); });
 
 function safePeerId(room){ return 'mai-room-' + room.replace(/[^a-zA-Z0-9_-]/g, '_'); }
@@ -727,7 +731,6 @@ const TURN_CREDENTIALS_URL = 'https://morhaf-intelegenc-ai.metered.live/api/v1/t
 // 2. Fetching TURN carefully, but defaulting to our robust array if blocked.
 async function getTurnServers(){
   try {
-    // Attempting to fetch Metered TURN, with a short timeout to prevent hanging
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 4000);
     const res = await fetch(TURN_CREDENTIALS_URL, { signal: controller.signal });
@@ -736,17 +739,16 @@ async function getTurnServers(){
     if(!res.ok) throw new Error('TURN credentials request failed');
     const iceServers = await res.json();
     if(Array.isArray(iceServers) && iceServers.length > 0) {
-      // Merge TURN servers with our robust STUN servers for maximum compatibility
       return [...ROBUST_ICE_SERVERS, ...iceServers];
     }
     throw new Error('Empty TURN credentials');
   } catch(err) {
-    console.warn('Metered TURN failed or blocked (very common in Syria). Using robust STUN array:', err);
+    console.warn('Metered TURN failed or blocked. Using robust STUN array:', err);
     return ROBUST_ICE_SERVERS;
   }
 }
 
-const CONNECT_TIMEOUT_MS = 15000; // Increased timeout for international connections
+const CONNECT_TIMEOUT_MS = 15000;
 let connectTimeoutRef = null;
 let lastAttemptedRoom = null;
 
@@ -769,7 +771,6 @@ async function connectToRoom(room){
   const iceServers = await getTurnServers();
   const pid = safePeerId(room); 
   
-  // 3. Ensuring secure parameter and proper debug levels
   peer = new Peer(pid, { 
       debug: 1, 
       secure: true,
@@ -779,6 +780,15 @@ async function connectToRoom(room){
   armConnectTimeout(() => { reportConnectIssue('يستغرق الأمر وقتًا أطول من المعتاد… تحقق من اتصال الإنترنت بينك وبين خصمك.'); });
   
   peer.on('open', () => { clearConnectTimeout(); isChatHost = true; peerReady = true; showRetryButton(false); enterP2PChat(true); });
+  
+  // Auto-Reconnect Fix when returning from background (Host side)
+  peer.on('disconnected', () => {
+    if (!peer.destroyed) {
+      console.log("Host disconnected, attempting to reconnect...");
+      peer.reconnect();
+    }
+  });
+
   peer.on('error', (err) => { 
       if(err.type === 'unavailable-id') { joinAsGuest(pid); }
       else { clearConnectTimeout(); reportConnectIssue('Error: ' + err.type); } 
@@ -800,10 +810,18 @@ async function joinAsGuest(hostId){
   
   peer.on('open', () => { 
       isChatHost = false; 
-      // 4. Force reliable connection
       conn = peer.connect(hostId, { reliable:true }); 
       bindConnection(); 
   });
+
+  // Auto-Reconnect Fix when returning from background (Guest side)
+  peer.on('disconnected', () => {
+    if (!peer.destroyed) {
+      console.log("Guest disconnected, attempting to reconnect...");
+      peer.reconnect();
+    }
+  });
+
   peer.on('error', (err) => { clearConnectTimeout(); reportConnectIssue('Error: ' + err.type); });
 }
 
@@ -843,6 +861,27 @@ function enterP2PChat(hosting){
   renderAllMessages(); showScreen('screen-chat');
   if(hosting) { setTimeout(() => { if(!peerReady) $('#chat-status-text').textContent = 'Waiting for peer...'; }, 300); }
 }
+
+/* ============================================================
+   AUTO RECONNECT (SLEEP/BACKGROUND FIX)
+   ============================================================ */
+// Monitor visibility state to reconnect instantly when returning to the app
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        if (peer && peer.disconnected && !peer.destroyed) {
+            console.log("App visible again: Reconnecting to signaling server...");
+            peer.reconnect();
+        }
+    }
+});
+
+window.addEventListener('online', () => {
+    if (peer && peer.disconnected && !peer.destroyed) {
+        console.log("Network online again: Reconnecting to signaling server...");
+        peer.reconnect();
+    }
+});
+/* ============================================================ */
 
 $('#btn-copy-room-id').addEventListener('click', async () => {
   if(!roomId) return;
