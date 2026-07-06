@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>MORHAF Intelligence · Chat & Games</title>
+<title>MORHAF Intelligence - Chat & Games</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -66,9 +66,6 @@ a{ color:var(--accent); }
 button{ font-family:inherit; }
 [dir-auto]{ unicode-bidi:plaintext; }
 
-/* Distinctive Arabic typography: Cairo carries the same geometric weight as
-   the Space Grotesk display font, while IBM Plex Sans Arabic gives body/RTL
-   copy a clean, professional read with proper line-height for Arabic. */
 [dir="rtl"], [lang="ar"]{ font-family:var(--font-arabic-body); line-height:1.7; letter-spacing:0; }
 [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] .brand, [dir="rtl"] .mode-title,
 [dir="rtl"] button, [dir="rtl"] .btn{ font-family:var(--font-arabic); font-weight:700; letter-spacing:0; }
@@ -280,7 +277,6 @@ button{ font-family:inherit; }
 
 <div id="app">
 
-  <!-- ============ SCREEN: INTRO ============ -->
   <section id="screen-intro" class="screen active">
     <div class="glass-card" dir="ltr">
       <h1 class="brand">MORHAF <span>Intelligence</span></h1>
@@ -294,7 +290,6 @@ button{ font-family:inherit; }
     </div>
   </section>
 
-  <!-- ============ SCREEN: MODE SELECT ============ -->
   <section id="screen-mode" class="screen" dir="ltr">
     <h2 style="margin-bottom:26px; font-size:20px;">Choose your experience</h2>
     <div class="mode-grid">
@@ -311,7 +306,6 @@ button{ font-family:inherit; }
     </div>
   </section>
 
-  <!-- ============ SCREEN: P2P SETUP ============ -->
   <section id="screen-p2p-setup" class="screen" dir="ltr">
     <div class="glass-card" style="width:100%;max-width:420px;padding:38px 30px;">
       <span class="back-link" data-back="screen-mode"><i class="ph ph-arrow-left"></i> Back</span>
@@ -338,7 +332,6 @@ button{ font-family:inherit; }
     </div>
   </section>
 
-  <!-- ============ SCREEN: CHAT ============ -->
   <section id="screen-chat" class="screen chat-screen" dir="ltr">
     <div class="chat-container">
       <div class="chat-header">
@@ -359,7 +352,6 @@ button{ font-family:inherit; }
       <div class="messages" id="messages"></div>
 
       <div style="position:relative;">
-        <!-- المرفقات مع خيار Mini Games -->
         <div class="attach-menu glass-card" id="attach-menu">
           <button data-attach="image"><i class="ph ph-image"></i> Photo</button>
           <button data-attach="video"><i class="ph ph-video-camera"></i> Video</button>
@@ -377,7 +369,6 @@ button{ font-family:inherit; }
     </div>
   </section>
 
-  <!-- ============ MODALS (Chat specific) ============ -->
   <div class="top-controls hidden" id="top-controls" dir="ltr">
     <div class="top-user-chip glass-card" id="user-chip">
       <i class="ph ph-user-circle"></i>
@@ -437,7 +428,6 @@ button{ font-family:inherit; }
   <input type="file" id="file-doc" hidden>
   <input type="file" id="file-sticker-source" accept="image/*" hidden>
 
-  <!-- ============ MINI GAMES MODAL ============ -->
   <div class="modal-overlay" id="minigames-modal" dir="rtl">
     <div class="modal-box glass-card" style="max-width: 380px;">
       <h3 style="margin-top:0; color:var(--accent); text-align:center;"><i class="ph ph-game-controller"></i> الألعاب 🎮</h3>
@@ -457,9 +447,6 @@ button{ font-family:inherit; }
     </div>
   </div>
 
-  <!-- =========================================================
-       GAME 1: XO
-       ========================================================= -->
   <section id="screen-xo-coin" class="screen game-screen" dir="rtl">
     <div class="glass-card">
         <h3 style="margin-bottom: 10px;">قرعة البداية</h3>
@@ -496,9 +483,6 @@ button{ font-family:inherit; }
     </div>
   </section>
 
-  <!-- =========================================================
-       GAME 2: GUESS IT (Wordle)
-       ========================================================= -->
   <section id="screen-guess-game" class="screen game-screen" dir="rtl">
     <div class="game-container">
         <div class="match-header">
@@ -518,9 +502,6 @@ button{ font-family:inherit; }
     </div>
   </section>
 
-  <!-- =========================================================
-       GAME 3: NEON HOCKEY
-       ========================================================= -->
   <section id="screen-hockey-game" class="screen game-screen" dir="ltr">
     <div class="hk-container">
         <div class="hk-score-board">
@@ -626,9 +607,6 @@ function showScreen(id){
   const target = document.getElementById(id);
   if(target) target.classList.add('active');
   if(id === 'screen-hockey-game') hockeyResize();
-  // The user chip / settings button is a fixed overlay meant only for the
-  // main menu screens. Hide it everywhere else so it never covers the
-  // chat header's back button or room ID.
   const chipScreens = ['screen-mode', 'screen-p2p-setup'];
   const chip = $('#top-controls');
   if(chip && profile.username){
@@ -726,41 +704,49 @@ $('#mode-ai').addEventListener('click', () => {
 $('#mode-p2p').addEventListener('click', () => showScreen('screen-p2p-setup'));
 
 /* ============================================================
-   P2P NETWORKING
+   P2P NETWORKING (MODIFIED FOR BETTER INTERNATIONAL CONNECTIVITY)
    ============================================================ */
 $('#btn-create-room').addEventListener('click', () => { connectToRoom('mai-' + Math.random().toString(36).substring(2, 8).toUpperCase()); });
 $('#room-form').addEventListener('submit', (e) => { e.preventDefault(); const val = $('#room-input').value.trim(); if(val) connectToRoom(val); });
 
 function safePeerId(room){ return 'mai-room-' + room.replace(/[^a-zA-Z0-9_-]/g, '_'); }
 
-// Fallback ICE servers used only if the Metered.ca TURN credentials API
-// call fails (e.g. offline, endpoint down, rate-limited). Google's public
-// STUN servers are enough to establish P2P on many networks, but won't
-// help across strict NATs/symmetric NATs — that's what TURN is for.
-const FALLBACK_ICE_SERVERS = [
+// 1. Updated ICE Servers with extensive STUN fallback to handle strict NATs 
+// in regions where certain domains might be blocked or throttled.
+const ROBUST_ICE_SERVERS = [
   { urls: 'stun:stun.l.google.com:19302' },
-  { urls: 'stun:stun1.l.google.com:19302' }
+  { urls: 'stun:stun1.l.google.com:19302' },
+  { urls: 'stun:stun2.l.google.com:19302' },
+  { urls: 'stun:stun.cloudflare.com:3478' },
+  { urls: 'stun:stun.twilio.com:3478' },
+  { urls: 'stun:stun.miwifi.com:3478' }
 ];
 
 const TURN_CREDENTIALS_URL = 'https://morhaf-intelegenc-ai.metered.live/api/v1/turn/credentials?apiKey=c3449377900ebc918a4f39be813b8c1cf0a7';
 
-// Fetches fresh TURN/STUN credentials from Metered.ca. Falls back to the
-// basic Google STUN servers if the request fails for any reason, so a Peer
-// is always created with *some* usable ICE server list.
+// 2. Fetching TURN carefully, but defaulting to our robust array if blocked.
 async function getTurnServers(){
-  try{
-    const res = await fetch(TURN_CREDENTIALS_URL);
-    if(!res.ok) throw new Error('TURN credentials request failed: ' + res.status);
+  try {
+    // Attempting to fetch Metered TURN, with a short timeout to prevent hanging
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const res = await fetch(TURN_CREDENTIALS_URL, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    
+    if(!res.ok) throw new Error('TURN credentials request failed');
     const iceServers = await res.json();
-    if(!Array.isArray(iceServers) || iceServers.length === 0) throw new Error('Empty TURN credentials response');
-    return iceServers;
-  }catch(err){
-    console.warn('getTurnServers: falling back to STUN-only ICE servers.', err);
-    return FALLBACK_ICE_SERVERS;
+    if(Array.isArray(iceServers) && iceServers.length > 0) {
+      // Merge TURN servers with our robust STUN servers for maximum compatibility
+      return [...ROBUST_ICE_SERVERS, ...iceServers];
+    }
+    throw new Error('Empty TURN credentials');
+  } catch(err) {
+    console.warn('Metered TURN failed or blocked (very common in Syria). Using robust STUN array:', err);
+    return ROBUST_ICE_SERVERS;
   }
 }
 
-const CONNECT_TIMEOUT_MS = 12000;
+const CONNECT_TIMEOUT_MS = 15000; // Increased timeout for international connections
 let connectTimeoutRef = null;
 let lastAttemptedRoom = null;
 
@@ -779,20 +765,45 @@ async function connectToRoom(room){
   lastAttemptedRoom = room;
   showRetryButton(false);
   roomId = room; mode = 'p2p'; $('#room-status').textContent = 'Connecting…';
+  
   const iceServers = await getTurnServers();
-  const pid = safePeerId(room); peer = new Peer(pid, { debug: 0, config: { iceServers } });
-  armConnectTimeout(() => { reportConnectIssue('يستغرق الأمر وقتًا أطول من المعتاد… تأكد من الاتصال بالإنترنت.'); });
+  const pid = safePeerId(room); 
+  
+  // 3. Ensuring secure parameter and proper debug levels
+  peer = new Peer(pid, { 
+      debug: 1, 
+      secure: true,
+      config: { iceServers: iceServers } 
+  });
+  
+  armConnectTimeout(() => { reportConnectIssue('يستغرق الأمر وقتًا أطول من المعتاد… تحقق من اتصال الإنترنت بينك وبين خصمك.'); });
+  
   peer.on('open', () => { clearConnectTimeout(); isChatHost = true; peerReady = true; showRetryButton(false); enterP2PChat(true); });
-  peer.on('error', (err) => { if(err.type === 'unavailable-id') joinAsGuest(pid); else { clearConnectTimeout(); reportConnectIssue('Error: ' + err.type); } });
+  peer.on('error', (err) => { 
+      if(err.type === 'unavailable-id') { joinAsGuest(pid); }
+      else { clearConnectTimeout(); reportConnectIssue('Error: ' + err.type); } 
+  });
   peer.on('connection', (c) => { conn = c; bindConnection(); });
 }
 
 async function joinAsGuest(hostId){
   if(peer) peer.destroy();
   const iceServers = await getTurnServers();
-  peer = new Peer(undefined, { debug: 0, config: { iceServers } });
-  armConnectTimeout(() => { reportConnectIssue('يستغرق الأمر وقتًا أطول من المعتاد… تأكد من رمز الغرفة والاتصال بالإنترنت.'); });
-  peer.on('open', () => { isChatHost = false; conn = peer.connect(hostId, { reliable:true }); bindConnection(); });
+  
+  peer = new Peer(undefined, { 
+      debug: 1, 
+      secure: true,
+      config: { iceServers: iceServers } 
+  });
+  
+  armConnectTimeout(() => { reportConnectIssue('لا يمكن الوصول للغرفة... قد يكون الجدار الناري (Firewall) يمنع الاتصال بين الشبكتين.'); });
+  
+  peer.on('open', () => { 
+      isChatHost = false; 
+      // 4. Force reliable connection
+      conn = peer.connect(hostId, { reliable:true }); 
+      bindConnection(); 
+  });
   peer.on('error', (err) => { clearConnectTimeout(); reportConnectIssue('Error: ' + err.type); });
 }
 
@@ -1343,8 +1354,6 @@ function hockeyUpdateMyPos(clientX, clientY) {
 hCanvas.addEventListener('mousemove', (e) => hockeyUpdateMyPos(e.clientX, e.clientY));
 hCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); hockeyUpdateMyPos(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
 
-// Runs on the HOST only: converts the guest's raw local touch coordinates
-// (sent as-is from the guest's own screen) into the host's coordinate frame.
 function hockeyUpdateGuestPaddle(x, y) { hockeyState.p2.x = hCanvas.width - x; hockeyState.p2.y = hCanvas.height - y; }
 function hockeyResetPuck() { hockeyState.puck.x = hCanvas.width / 2; hockeyState.puck.y = hCanvas.height / 2; hockeyState.puck.vx = 0; hockeyState.puck.vy = 0; }
 
@@ -1397,13 +1406,6 @@ function hockeyAI() {
     if (aiPaddle.x < aiPaddle.radius) aiPaddle.x = aiPaddle.radius; if (aiPaddle.x > hCanvas.width - aiPaddle.radius) aiPaddle.x = hCanvas.width - aiPaddle.radius;
 }
 
-// Runs on the GUEST only. The host always sends state expressed in ITS OWN
-// local frame. To make the guest's screen show "my paddle at the bottom,
-// opponent at the top" — exactly like the host sees it on their own side —
-// every synced entity (host's paddle, puck, boosts) must be mirrored into
-// the guest's local frame. The guest's OWN paddle (p2.x/p2.y) is never
-// touched here: it already lives in local coordinates because it's driven
-// directly by the guest's own touch/mouse input.
 function hockeyUpdateState(state) {
     hockeyState.score1 = state.score1; hockeyState.score2 = state.score2;
     hockeyState.puck = {
@@ -1428,11 +1430,6 @@ function hockeyRenderLoop() {
     hCtx.fillStyle = 'rgba(255, 84, 112, 0.15)'; hCtx.fillRect(gl, 0, 140, 20);
     hCtx.fillStyle = 'rgba(57, 240, 214, 0.15)'; hCtx.fillRect(gl, hCanvas.height - 20, 140, 20);
     
-    // "isHostRole" only decides who owns the authoritative physics/AI step
-    // and broadcasts state — it must NOT be used to flip coordinates again
-    // at render time. hockeyState is already expressed in this client's own
-    // local frame at all times (host: naturally so; guest: normalized inside
-    // hockeyUpdateState + its own locally-driven p2), so we simply draw it.
     let isHostRole = (mode === 'ai' || isGameHost);
     if (isHostRole) { if (mode === 'ai') hockeyAI(); hockeyUpdatePhysics(); if (mode === 'p2p') sendData({ type: 'hockey_state', state: hockeyState }); }
 
