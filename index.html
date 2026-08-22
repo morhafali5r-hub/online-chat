@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Chatlounge - Ultimate Arcade & AI Mode</title>
+    <title>اونلاين شــات - Ultimate Arcade & AI Mode</title>
     
     <!-- Supabase CDN -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -16,6 +16,7 @@
         @font-face { font-family: 'Kaswa-Modern'; src: url('https://cdn.jsdelivr.net/gh/morhafali5r-hub/M.F.L@main/MORHAF-Fonts/kaswa/Kaswa-Modern.ttf'); font-display: swap; }
         @font-face { font-family: 'Gali'; src: url('https://cdn.jsdelivr.net/gh/morhafali5r-hub/M.F.L@main/MORHAF-Fonts/gali/Gali.ttf'); font-display: swap; }
         @font-face { font-family: 'Milan-Black'; src: url('https://cdn.jsdelivr.net/gh/morhafali5r-hub/M.F.L@main/MORHAF-Fonts/milan-display/Milan%20Display%20Black.otf'); font-display: swap; }
+        @font-face { font-family: 'Panorama-Naskh'; src: url('https://cdn.jsdelivr.net/gh/morhafali5r-hub/M.F.L@main/MORHAF-Fonts/panorama-naksh/PanoramaNaskh-Scribble.ttf'); font-display: swap; }
 
         :root {
             --bg-grad-1: #fdfaf4; --bg-grad-2: #f0e6d2;
@@ -44,6 +45,8 @@
         @media (min-width: 768px) { #app { width: 90vw; max-width: 1100px; height: 90vh; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); backdrop-filter: blur(20px); } }
 
         h1, h2, h3, .title-font { font-family: 'Thmanyah-Bold', serif; }
+        .my-custom-text { font-family: 'Thmanyah-Bold', sans-serif; }
+        
         .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 30px; backdrop-filter: blur(12px); }
         .btn { font-family: 'Thmanyah-Bold', serif; background: var(--accent-green); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-size: 1.3rem; cursor: pointer; box-shadow: 0 4px 0 #324016; transition: all 0.15s; display: inline-flex; justify-content: center; align-items: center; gap: 8px; width: 100%; }
         .btn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 #324016; }
@@ -162,32 +165,9 @@
         /* Responsive Boards */
         .board-container-wrapper { width: 100%; display: flex; justify-content: center; padding: 10px 0;}
         
-        /* 🔴 رقعة الشطرنج النظامية 100% 🔴 */
-        #chess-board { 
-            display: grid; 
-            grid-template-columns: repeat(8, 1fr); 
-            grid-template-rows: repeat(8, 1fr); 
-            width: 360px; 
-            height: 360px; 
-            max-width: 100%; 
-            aspect-ratio: 1; 
-            border: 4px solid #5c442c; 
-            border-radius: 4px; 
-            box-sizing: border-box; 
-            margin: 0 auto;
-        }
-        .chess-cell { 
-            width: 100%; 
-            height: 100%; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            font-size: clamp(1.2rem, 4vw, 2rem); 
-            cursor: pointer; 
-            position: relative; 
-        }
-        .chess-white { background: #e8dcc4; } 
-        .chess-black { background: #8b6b4a; }
+        #chess-board { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: 360px; height: 360px; max-width: 100%; aspect-ratio: 1; border: 4px solid #5c442c; border-radius: 4px; box-sizing: border-box; margin: 0 auto;}
+        .chess-cell { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; font-size: clamp(1.2rem, 4vw, 2rem); cursor: pointer; position: relative; }
+        .chess-white { background: #e8dcc4; } .chess-black { background: #8b6b4a; }
         .chess-piece { text-shadow: 0 1px 2px rgba(0,0,0,0.5); pointer-events: none;}
         .chess-cell.selected { background: rgba(176, 141, 87, 0.8); }
         .chess-valid::after { content:''; position:absolute; width:25%; height:25%; background:rgba(0,0,0,0.4); border-radius:50%; pointer-events: none; }
@@ -214,7 +194,6 @@
         /* 🔴 KHAMENHA 🔴 */
         .khamenha-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .k-category { font-family: 'Thmanyah-Bold', serif; font-size: 1.2rem; background: rgba(212, 196, 168, 0.4); border: 1px dashed var(--card-border); padding: 4px 15px; border-radius: 4px; margin-bottom: 10px; color: var(--text-dark); display: inline-block; }
-        
         .k-board { display: flex; flex-direction: column; gap: 6px; margin: 5px auto 15px; width: 100%; max-width:320px; perspective: 1000px;}
         .k-row { display: flex; justify-content: center; gap: 6px; width: 100%; }
         .k-tile { width: 45px; height: 45px; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -232,7 +211,6 @@
         .k-key { flex: 1; height: 42px; min-width: 0; padding:0; background: #fff; color: var(--text-dark); font-family: 'Milan-Black', sans-serif; font-size: 1.1rem; border: 1px solid var(--card-border); box-shadow: 0px 4px 0px var(--card-border); display: flex; justify-content: center; align-items: center; border-radius: 6px; cursor: pointer; transition: transform 0.05s;}
         .k-key:active { transform: translateY(4px); box-shadow: 0 0 0; }
         .k-key.large { flex: 1.5; font-size: 1rem; font-family: 'Kaswa-Modern', sans-serif; }
-        
         .k-key.correct { background: var(--kh-correct); color: #fbf8f1; border-color: var(--kh-correct); }
         .k-key.present { background: var(--kh-present); color: #fbf8f1; border-color: var(--kh-present); }
         .k-key.absent { background: var(--kh-absent); color: rgba(255,255,255,0.7); border-color: var(--kh-absent); }
@@ -272,26 +250,46 @@
             background: linear-gradient(135deg, #fdfaf4, #f0e6d2);
         }
         .gw-chat-side { width: 320px; display: flex; flex-direction: column; background: #fff; border-right: 2px solid var(--card-border); }
-        .gw-board-side { flex: 1; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; align-items: center; }
+        .gw-board-side { flex: 1; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; align-items: center; position: relative; }
         
         @media (max-width: 768px) { 
-            #gw-modal .game-modal { flex-direction: column; height: 92vh; } 
-            .gw-chat-side { width: 100%; height: 40%; border-right: none; border-top: 2px solid var(--card-border); } 
-            .gw-board-side { height: 60%; } 
+            #gw-modal .game-modal { flex-direction: column; height: 95vh; } 
+            .gw-board-side { height: 55%; padding: 10px; }
+            .gw-chat-side { width: 100%; height: 45%; border-right: none; border-top: 2px solid var(--card-border); flex: 1; } 
+            .gw-grid { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)) !important; }
         }
 
-        .gw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; width: 100%; max-width: 600px; margin-top: 15px; }
-        .gw-card { background: #fbf8f1; border: 2px solid var(--card-border); border-radius: 8px; padding: 6px; text-align: center; cursor: pointer; box-shadow: 0 3px 0 var(--card-border); position: relative; user-select: none; transition: transform 0.1s;}
-        .gw-card:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--card-border); }
-        .gw-card img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; pointer-events: none; transition: filter 0.3s ease; }
-        .gw-card .gw-name { font-family: 'Kaswa-Modern', sans-serif; font-weight: bold; font-size: 0.9rem; margin-top: 4px; pointer-events: none; display: block; color: var(--text-dark);}
+        .gw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; width: 100%; max-width: 650px; margin-top: 5px; }
         
-        .gw-card.eliminated img { filter: grayscale(100%); opacity: 0.6; }
-        .gw-card.eliminated::after { content: ''; position: absolute; top: 40%; left: 10%; right: 10%; height: 8px; background: rgba(211,47,47,0.85); transform: rotate(-25deg); border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.3); pointer-events: none;}
+        /* Updated Guess Who Card styling (Chalk effect from Source 2) */
+        .gw-card { 
+            background: #fbf8f1; border: 2px solid var(--card-border); border-radius: 8px; 
+            padding: 8px 8px 10px; display: flex; flex-direction: column; align-items: center; text-align: center;
+            cursor: pointer; box-shadow: inset 0 1px 4px rgba(62,42,20,0.1), 0 3px 0px var(--card-border);
+            position: relative; user-select: none; transition: transform 0.1s, box-shadow 0.15s;
+            animation: fadeUp 0.5s both;
+        }
+        .gw-card:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--card-border); }
+        
+        .photo-wrap { position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 6px; overflow: hidden; margin-bottom: 8px; background: var(--card-border); pointer-events: none;}
+        .photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: filter 0.35s ease; }
+        .chalk-tint { position: absolute; inset: 0; background: rgba(211,47,47,0.1); opacity: 0; transition: opacity 0.35s ease; pointer-events: none; }
+        .chalk { 
+            position: absolute; top: 50%; left: 50%; width: 0%; height: 11px; 
+            background: repeating-linear-gradient(90deg, var(--accent-red) 0 7px, transparent 7px 11px); 
+            transform: translate(-50%, -50%) rotate(var(--rot, -26deg)); transform-origin: center; 
+            transition: width 0.38s cubic-bezier(.2,.9,.3,1); filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25)); 
+            border-radius: 6px; pointer-events: none;
+        }
+        
+        .gw-card.eliminated .chalk { width: 135%; }
+        .gw-card.eliminated .chalk-tint { opacity: 1; }
+        .gw-card.eliminated img { filter: grayscale(100%); }
+        .gw-card .gw-name { font-family: 'Kaswa-Modern', sans-serif; font-weight: bold; font-size: 0.9rem; pointer-events: none; display: block; color: var(--text-dark);}
         
         .gw-top-panel { width: 100%; background: #fff; border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .gw-secret-display { display: flex; align-items: center; gap: 10px; }
-        .gw-secret-display img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--card-border); object-fit: cover; }
+        .gw-secret-display img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--card-border); object-fit: cover; }
         
         .gw-chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.02); }
         .gw-yes-no-actions { padding: 10px; background: #fdfaf4; text-align: center; border-top: 1px solid var(--card-border); display: none; animation: popIn 0.2s ease;}
@@ -306,7 +304,7 @@
     <div id="app">
         <!-- شاشة الدخول -->
         <div id="login-screen">
-            <h1>Chatlounge</h1>
+            <h1 class="my-custom-text">اونلاين شــات</h1>
             <span class="hint" style="margin-bottom: 30px;">العب وتواصل بأسلوبك (أدخل chatwithai للروبوت)</span>
             <div class="card login-card">
                 <div id="auth-error" class="error-msg"></div>
@@ -388,7 +386,6 @@
         </div>
 
         <!-- ================= MODALS ================= -->
-        <!-- Chess Modal -->
         <div class="modal-overlay" id="chess-modal">
             <div class="game-modal" style="background:#e8dcc4;">
                 <div class="game-header">
@@ -400,7 +397,6 @@
             </div>
         </div>
 
-        <!-- Connect 4 Modal -->
         <div class="modal-overlay" id="c4-modal">
             <div class="game-modal" style="background:#e0f7fa;">
                 <div class="game-header">
@@ -412,7 +408,6 @@
             </div>
         </div>
 
-        <!-- Time Guesser Modal -->
         <div class="modal-overlay" id="time-modal">
             <div class="game-modal" style="background:#2c3e50; border: 4px solid #34495e;">
                 <div class="game-header">
@@ -429,7 +424,6 @@
             </div>
         </div>
 
-        <!-- Memory Modal -->
         <div class="modal-overlay" id="mem-modal">
             <div class="game-modal" style="background:#fff3e0;">
                 <div class="game-header">
@@ -441,7 +435,6 @@
             </div>
         </div>
 
-        <!-- XO Modal -->
         <div class="modal-overlay" id="xo-modal">
             <div class="game-modal">
                 <div class="game-header">
@@ -453,7 +446,6 @@
             </div>
         </div>
 
-        <!-- Khamenha Modal -->
         <div class="modal-overlay" id="khamenha-modal">
             <div class="game-modal" style="background: linear-gradient(135deg, #f4ecd8, #e8dcc4); max-width: 450px;">
                 <div class="game-header">
@@ -479,7 +471,6 @@
             </div>
         </div>
 
-        <!-- SIMON SAYS MODAL -->
         <div class="modal-overlay" id="simon-modal">
             <div class="game-modal" style="background: #141c24;">
                 <div class="game-header">
@@ -508,22 +499,21 @@
         <div class="modal-overlay" id="gw-modal">
             <div class="game-modal">
                 <div class="gw-board-side">
+                    <!-- Secret Info Panel Pinned at Top -->
+                    <div id="gw-secret-panel" style="display:none; width:100%; justify-content:space-between; align-items:center; background:#fff; padding:6px 12px; border-radius:12px; border:1px dashed var(--accent-gold); margin-bottom:10px; position:sticky; top:0; z-index:20; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+                        <span style="font-family:'Gali'; font-size:0.95rem; font-weight:bold;">شخصيتك السرية:</span>
+                        <div class="gw-secret-display">
+                            <span id="gw-my-secret-name" style="font-family:'Kaswa-Modern'; font-weight:bold; color:var(--accent-red);"></span>
+                            <img id="gw-my-secret-img" src="" alt="">
+                        </div>
+                    </div>
+                    
                     <div class="gw-top-panel">
-                        <h2 style="margin:0; font-family:'Thmanyah-Bold'; font-size:1.6rem;">خمن من؟ 🎭</h2>
+                        <h2 style="margin:0; font-family:'Thmanyah-Bold'; font-size:1.5rem;">خمن من؟ 🎭</h2>
                         <button class="btn-close-game" onclick="forceCloseGame()" style="padding:4px 10px; font-size:1rem;">خروج 🚪</button>
                     </div>
                     
                     <div id="gw-status-text" class="hint" style="margin-bottom:10px; font-weight:bold; font-size:1.1rem; color:var(--accent-red);">اختر شخصيتك السرية للبدء</div>
-                    
-                    <!-- Secret Info Panel (Hidden initially) -->
-                    <div id="gw-secret-panel" style="display:none; width:100%; justify-content:space-between; align-items:center; background:#fff; padding:10px; border-radius:12px; border:1px dashed var(--accent-gold); margin-bottom:15px;">
-                        <span style="font-family:'Gali'; font-size:0.95rem; font-weight:bold;">شخصيتك السرية:</span>
-                        <div class="gw-secret-display">
-                            <img id="gw-my-secret-img" src="" alt="">
-                            <span id="gw-my-secret-name" style="font-family:'Kaswa-Modern'; font-weight:bold;"></span>
-                        </div>
-                    </div>
-
                     <p style="font-family:'Panorama-Naskh'; font-size:0.9rem; color:rgba(0,0,0,0.6); margin:0;">اضغط لاستبعاد شخصية، أو مطولاً لتخمين الخصم كحل نهائي</p>
                     
                     <div class="gw-grid" id="gw-grid">
@@ -532,13 +522,13 @@
                 </div>
                 
                 <div class="gw-chat-side">
-                    <div style="background:rgba(255,255,255,0.8); padding:10px; border-bottom:1px solid var(--card-border); text-align:center; font-family:'Thmanyah-Bold'; font-size:1.2rem; color:var(--accent-gold);">دردشة اللعبة</div>
+                    <div style="background:rgba(255,255,255,0.8); padding:10px; border-bottom:1px solid var(--card-border); text-align:center; font-family:'Thmanyah-Bold'; font-size:1.2rem; color:var(--accent-gold);">أسئلة اللعبة</div>
                     <div class="gw-chat-body" id="gw-chat-body">
                         <!-- Syncs with main chat -->
                     </div>
                     
                     <div id="gw-yes-no-actions" class="gw-yes-no-actions">
-                        <span style="font-family:'Gali'; font-size:0.9rem; margin-bottom:8px; display:block; font-weight:bold;">هل سألك الخصم؟ أجب فوراً:</span>
+                        <span style="font-family:'Gali'; font-size:0.9rem; margin-bottom:8px; display:block; font-weight:bold;">أجب على الخصم:</span>
                         <div style="display:flex; justify-content:center; gap:10px;">
                             <button class="btn" onclick="gwSendReply('نعم ✅')" style="flex:1; padding:8px; background:var(--accent-green);">نعم ✅</button>
                             <button class="btn" onclick="gwSendReply('لا ❌')" style="flex:1; padding:8px; background:var(--accent-red);">لا ❌</button>
@@ -547,7 +537,7 @@
 
                     <div class="chat-footer" style="border-top:1px solid var(--card-border);">
                         <div class="chat-input-wrapper">
-                            <input type="text" id="gw-chat-input" placeholder="اسأل سؤالاً (هل يرتدي قبعة؟)..." autocomplete="off">
+                            <input type="text" id="gw-chat-input" placeholder="اسأل الخصم..." autocomplete="off">
                         </div>
                         <button id="gw-send-btn" class="icon-btn-chat" style="color:var(--accent-green);font-size:1.6rem; padding:5px;">➤</button>
                     </div>
@@ -574,26 +564,111 @@
                 constructor() { this.ctx = null; }
                 init() { if(!this.ctx) { const AC = window.AudioContext || window.webkitAudioContext; if(AC) this.ctx = new AC(); } if(this.ctx && this.ctx.state==='suspended') this.ctx.resume(); }
                 vibrate(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
+                
+                makeNoiseBuffer(duration) {
+                    if(!this.ctx) return null;
+                    const len = Math.max(1, Math.floor(this.ctx.sampleRate * duration));
+                    const buffer = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+                    return buffer;
+                }
+                
+                tone(freqStart, freqEnd, duration, type, gainPeak, delay=0) {
+                    if (!this.ctx) return;
+                    const t0 = this.ctx.currentTime + delay;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freqStart, t0);
+                    if (freqEnd !== freqStart) osc.frequency.exponentialRampToValueAtTime(Math.max(freqEnd, 1), t0 + duration);
+                    gain.gain.setValueAtTime(0.0001, t0);
+                    gain.gain.exponentialRampToValueAtTime(gainPeak, t0 + 0.015);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+                    osc.connect(gain).connect(this.ctx.destination);
+                    osc.start(t0);
+                    osc.stop(t0 + duration + 0.02);
+                }
+
+                playChalk() {
+                    if(!this.ctx) return;
+                    const t0 = this.ctx.currentTime;
+                    const dur = 0.32;
+                    const noise = this.ctx.createBufferSource();
+                    noise.buffer = this.makeNoiseBuffer(dur);
+                    const band = this.ctx.createBiquadFilter();
+                    band.type = "bandpass";
+                    band.frequency.setValueAtTime(2600, t0);
+                    band.frequency.linearRampToValueAtTime(1800, t0 + dur);
+                    band.Q.value = 4.5;
+                    const gain = this.ctx.createGain();
+                    gain.gain.setValueAtTime(0.0001, t0);
+                    gain.gain.exponentialRampToValueAtTime(0.5, t0 + 0.03);
+                    gain.gain.setValueAtTime(0.45, t0 + dur * 0.6);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+                    noise.connect(band).connect(gain).connect(this.ctx.destination);
+                    noise.start(t0);
+                    noise.stop(t0 + dur + 0.02);
+                }
+
+                playSwoosh() {
+                    if(!this.ctx) return;
+                    const t0 = this.ctx.currentTime;
+                    const dur = 0.28;
+                    const noise = this.ctx.createBufferSource();
+                    noise.buffer = this.makeNoiseBuffer(dur);
+                    const band = this.ctx.createBiquadFilter();
+                    band.type = "bandpass";
+                    band.frequency.setValueAtTime(500, t0);
+                    band.frequency.exponentialRampToValueAtTime(3200, t0 + dur);
+                    band.Q.value = 1.2;
+                    const gain = this.ctx.createGain();
+                    gain.gain.setValueAtTime(0.0001, t0);
+                    gain.gain.exponentialRampToValueAtTime(0.35, t0 + dur * 0.4);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+                    noise.connect(band).connect(gain).connect(this.ctx.destination);
+                    noise.start(t0);
+                    noise.stop(t0 + dur + 0.02);
+                }
+
+                winFanfare() {
+                    const notes = [523.25, 659.25, 783.99, 1046.5];
+                    notes.forEach((f, i) => this.tone(f, f, 0.28, "triangle", 0.22, i * 0.12));
+                    this.tone(1046.5, 1046.5, 0.5, "sine", 0.15, notes.length * 0.12);
+                }
+
+                loseBuzzer() {
+                    if (!this.ctx) return;
+                    const t0 = this.ctx.currentTime;
+                    [0, 1].forEach(k => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = "sawtooth";
+                        osc.frequency.setValueAtTime(140 + k * 6, t0);
+                        osc.frequency.linearRampToValueAtTime(80 + k * 6, t0 + 0.5);
+                        gain.gain.setValueAtTime(0.0001, t0);
+                        gain.gain.exponentialRampToValueAtTime(0.16, t0 + 0.03);
+                        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.5);
+                        osc.connect(gain).connect(this.ctx.destination);
+                        osc.start(t0);
+                        osc.stop(t0 + 0.52);
+                    });
+                }
+
                 play(t) {
                     if (!this.ctx) return;
-                    try {
-                        const o = this.ctx.createOscillator(); const g = this.ctx.createGain(); o.connect(g); g.connect(this.ctx.destination); const n = this.ctx.currentTime;
-                        if(t==='pop') { o.type='sine'; o.frequency.setValueAtTime(600,n); o.frequency.exponentialRampToValueAtTime(900,n+0.1); g.gain.setValueAtTime(0.3,n); g.gain.exponentialRampToValueAtTime(0.01,n+0.1); o.start(n); o.stop(n+0.1); }
-                        else if(t==='win') { o.type='square'; o.frequency.setValueAtTime(440,n); o.frequency.setValueAtTime(659,n+0.2); g.gain.setValueAtTime(0.2,n); g.gain.linearRampToValueAtTime(0,n+0.6); o.start(n); o.stop(n+0.6); }
-                        else if(t==='lose') { o.type='sawtooth'; o.frequency.setValueAtTime(200,n); o.frequency.exponentialRampToValueAtTime(50,n+0.5); g.gain.setValueAtTime(0.3,n); g.gain.linearRampToValueAtTime(0,n+0.5); o.start(n); o.stop(n+0.5); }
-                        else if(t==='hit'){ o.type='square'; o.frequency.setValueAtTime(120,n); o.frequency.exponentialRampToValueAtTime(40,n+0.1); g.gain.setValueAtTime(0.2,n); g.gain.exponentialRampToValueAtTime(0.01,n+0.1); o.start(n); o.stop(n+0.1); }
-                        else if(t==='coin'){ o.type='sine'; o.frequency.setValueAtTime(1200,n); o.frequency.setValueAtTime(1800,n+0.1); g.gain.setValueAtTime(0.1,n); g.gain.linearRampToValueAtTime(0,n+0.3); o.start(n); o.stop(n+0.3); }
-                    } catch(e) {}
+                    if(t==='pop') { this.tone(700, 500, 0.08, "triangle", 0.15, 0); }
+                    else if(t==='win') { this.winFanfare(); }
+                    else if(t==='lose') { this.loseBuzzer(); }
+                    else if(t==='hit'){ this.tone(120, 40, 0.1, "square", 0.2, 0); }
+                    else if(t==='coin'){ this.tone(1200, 1800, 0.3, "sine", 0.1, 0); }
                 }
+
                 simon(i) {
                     if (!this.ctx) return;
                     try {
                         const freqs = [261.6, 293.7, 329.6, 349.2, 392.0, 440.0, 493.9, 523.3, 587.3];
-                        const o = this.ctx.createOscillator(); const g = this.ctx.createGain();
-                        o.connect(g); g.connect(this.ctx.destination); const n = this.ctx.currentTime;
-                        o.type = 'sine'; o.frequency.setValueAtTime(freqs[i] || 440, n);
-                        g.gain.setValueAtTime(0.2, n); g.gain.exponentialRampToValueAtTime(0.01, n+0.4);
-                        o.start(n); o.stop(n+0.4);
+                        this.tone(freqs[i]||440, freqs[i]||440, 0.4, "sine", 0.2, 0);
                     } catch(e) {}
                 }
             }
@@ -609,7 +684,7 @@
                     xo: { active:false, board:Array(9).fill(null), turn:'X', mySym:null },
                     c4: { active:false, board:Array(6).fill().map(()=>Array(7).fill(null)), turn:'R', mySym:null },
                     chess: { active:false, board:[], turn:'W', mySym:null, sel:null, validMoves:[] },
-                    gw: { active:false, role:null, mySecret:null, oppSecret:null, ready:false, oppReady:false, eliminated:[] },
+                    gw: { active:false, role:null, mySecret:null, oppSecret:null, ready:false, oppReady:false, eliminated:[], boardOrder:null },
                     kham: { active:false, w:'', h:'', c:'', g:[], row:0, pts:parseInt(localStorage.getItem('chatlounge_k_pts')||'0'), streak:parseInt(localStorage.getItem('chatlounge_k_streak')||'0'), maxA:7, hB:false, rmB:false, locked:[], discovered:[] },
                     time: { active:false, loop:null, pts:parseInt(localStorage.getItem('chatlounge_time_pts')||'0') },
                     mem: { active:false, cards:[], flipped:[], matches:0, steps:0, startTime:0 },
@@ -663,7 +738,7 @@
                     updateOnlineList(['الروبوت AI', state.username]);
                     document.getElementById('dot-status').classList.add('ai-mode');
                     state.channel = { send: function(p) { handleAIResponse(p); } };
-                    setTimeout(()=>renderMsg({type:'text', content:'أهلاً بك يا بطل! أنا الروبوت.. تحداك تلعب معي شطرنج! 🤖', author:'الروبوت AI', color:'#00bcd4'}, false), 1000);
+                    setTimeout(()=>renderMsg({type:'text', content:'أهلاً بك يا بطل! أنا الروبوت.. تحداك تلعب معي شطرنج أو خمن من؟ 🤖', author:'الروبوت AI', color:'#00bcd4'}, false), 1000);
                 } else {
                     setupChannel(); loadDB(); 
                 }
@@ -740,7 +815,30 @@
                 if(state.isAI) {
                     if(m.type === 'text') {
                         if(state.games.gw && state.games.gw.active) {
-                            setTimeout(()=>renderMsg({type:'text', content: (Math.random()>0.5?'نعم ✅':'لا ❌'), author:'الروبوت AI', color:'#00bcd4'}, false), 1500);
+                            setTimeout(()=>{
+                                const aiQuestions = [
+                                    "هل شخصيتك تضع قبعة؟ 🎩", "هل شخصيتك ترتدي نظارات؟ 👓", "هل شخصيتك ذات شعر أشقر؟ 👱", 
+                                    "هل شخصيتك تمتلك شارب؟ 摸", "هل شخصيتك أنثى؟ 👩", "هل شخصيتك أصلع؟ 👨‍🦲",
+                                    "هل شخصيتك تبتسم؟ 😊", "هل لون شعر شخصيتك أسود؟ 🧑🏻‍🦱"
+                                ];
+                                let isAnswering = (m.content.includes('نعم') || m.content.includes('لا') || m.content.includes('❌') || m.content.includes('✅'));
+                                if(isAnswering) {
+                                    if(Math.random() > 0.8) {
+                                        let rndChar = GW_CHARS[Math.floor(Math.random()*24)].name;
+                                        renderMsg({type:'text', content:`أعتقد أنني عرفت الشخصية! هل هي ${rndChar}؟ 🤔`, author:'الروبوت AI', color:'#00bcd4'}, false);
+                                    } else {
+                                        let q = aiQuestions[Math.floor(Math.random() * aiQuestions.length)];
+                                        renderMsg({type:'text', content: q, author:'الروبوت AI', color:'#00bcd4'}, false);
+                                    }
+                                } else {
+                                    let ans = Math.random() > 0.5 ? 'نعم ✅' : 'لا ❌';
+                                    renderMsg({type:'text', content: ans, author:'الروبوت AI', color:'#00bcd4'}, false);
+                                    setTimeout(() => {
+                                        let q = aiQuestions[Math.floor(Math.random() * aiQuestions.length)];
+                                        renderMsg({type:'text', content: 'دوري الآن: ' + q, author:'الروبوت AI', color:'#00bcd4'}, false);
+                                    }, 1500);
+                                }
+                            }, 1000);
                         } else {
                             setTimeout(()=>renderMsg({type:'text', content:'أنا مجرد روبوت للاختبار 😅 تحداك في لعبة!', author:'الروبوت AI', color:'#00bcd4'}, false), 1000);
                         }
@@ -925,14 +1023,18 @@
                 
                 // Sync with Guess Who Chat if active
                 if(state.games.gw && state.games.gw.active && document.getElementById('gw-modal').classList.contains('active')) {
-                    const gwDiv = div.cloneNode(true);
-                    const gwChatBody = document.getElementById('gw-chat-body');
-                    gwChatBody.appendChild(gwDiv);
-                    gwChatBody.scrollTop = 99999;
-                    
-                    // Show Quick Reply Yes/No if opponent sent text
-                    if(!isMine && !isHist && m.type === 'text' && m.author !== 'الروبوت AI') {
-                        document.getElementById('gw-yes-no-actions').style.display = 'block';
+                    if(m.type === 'text') {
+                        const gwDiv = div.cloneNode(true);
+                        const gwChatBody = document.getElementById('gw-chat-body');
+                        gwChatBody.appendChild(gwDiv);
+                        gwChatBody.scrollTop = 99999;
+                        
+                        // Show Quick Reply Yes/No if opponent sent a question
+                        let content = m.content || '';
+                        let isAnswering = (content.includes('نعم') || content.includes('لا') || content.includes('❌') || content.includes('✅') || content.includes('أعتقد'));
+                        if(!isMine && !isHist && m.type === 'text' && !isAnswering) {
+                            document.getElementById('gw-yes-no-actions').style.display = 'block';
+                        }
                     }
                 }
             }
@@ -1000,7 +1102,7 @@
             }
 
             // ==========================================
-            // GAME 1: XO (مع تحديث محلي للإرسال)
+            // GAME 1: XO
             // ==========================================
             function startXO(sym, id) {
                 state.games.xo = { active:true, board:Array(9).fill(null), turn:'X', mySym:sym };
@@ -1027,7 +1129,7 @@
                 for(let p of w) if(b[p[0]]&&b[p[0]]===b[p[1]]&&b[p[1]]===b[p[2]]) win=b[p[0]];
                 if(win || !b.includes(null)) { 
                     state.games.xo.active=false; 
-                    if(win){ const me=win===state.games.xo.mySym; document.getElementById('xo-status').textContent=me?"فزت!":"خسرت"; me?fx.play('win'):fx.play('lose'); } 
+                    if(win){ const me=win===state.games.xo.mySym; document.getElementById('xo-status').textContent=me?"فزت!":"خسرت"; me?fx.winFanfare():fx.loseBuzzer(); } 
                     else { document.getElementById('xo-status').textContent="تعادل"; } 
                     setTimeout(forceCloseGame, 1500); 
                 }
@@ -1042,7 +1144,7 @@
             }
 
             // ==========================================
-            // GAME 2: CONNECT 4 (مع تحديث محلي للإرسال)
+            // GAME 2: CONNECT 4
             // ==========================================
             function startC4(sym, id) {
                 state.games.c4 = { active:true, board:Array(6).fill().map(()=>Array(7).fill(null)), turn:'R', mySym:sym };
@@ -1078,7 +1180,7 @@
                 }
                 if(win || !b[0].includes(null)) { 
                     state.games.c4.active=false; 
-                    if(win) { const me=win===state.games.c4.mySym; document.getElementById('c4-status').textContent=me?"فزت!":"خسرت"; me?fx.play('win'):fx.play('lose'); } 
+                    if(win) { const me=win===state.games.c4.mySym; document.getElementById('c4-status').textContent=me?"فزت!":"خسرت"; me?fx.winFanfare():fx.loseBuzzer(); } 
                     else document.getElementById('c4-status').textContent="تعادل"; 
                     setTimeout(forceCloseGame, 2000); 
                 }
@@ -1093,7 +1195,7 @@
             }
 
             // ==========================================
-            // GAME 3: CHESS (مع تحديث محلي للإرسال)
+            // GAME 3: CHESS 
             // ==========================================
             const CHESS_START = [
                 ['♜','♞','♝','♛','♚','♝','♞','♜'], ['♟','♟','♟','♟','♟','♟','♟','♟'],
@@ -1213,7 +1315,7 @@
                     if(target || opponentInCheck) {
                         const win = (target==='♚' && st.mySym==='W') || (target==='♔' && st.mySym==='B') || (opponentInCheck && st.turn!==st.mySym);
                         document.getElementById('chess-status').textContent = win?"كش مات! فزت 🏆":"كش مات! خسرت";
-                        win?fx.play('win'):fx.play('lose');
+                        win?fx.winFanfare():fx.loseBuzzer();
                     } else document.getElementById('chess-status').textContent = "تعادل بالجمود!";
                     setTimeout(forceCloseGame, 3000);
                 } else {
@@ -1276,17 +1378,16 @@
             }
 
             function startGW(role, id) {
-                state.games.gw = { active: true, role: role, mySecret: null, oppSecret: null, ready: false, oppReady: false, eliminated: [] };
+                state.games.gw = { active: true, role: role, mySecret: null, oppSecret: null, ready: false, oppReady: false, eliminated: [], boardOrder: null };
                 const inv = document.getElementById(`inv-${id}`); if(inv) { inv.querySelector('.msg-text').textContent = 'بدأت اللعبة'; inv.querySelector('button').style.display='none';}
                 
                 document.getElementById('gw-secret-panel').style.display = 'none';
                 document.getElementById('gw-status-text').textContent = "اختر شخصيتك السرية للبدء";
                 
-                // Copy Main Chat History into GW Chat
+                // Clear GW Chat 
                 const gwChatBody = document.getElementById('gw-chat-body');
                 gwChatBody.innerHTML = '';
-                Array.from(UI.chatBody.children).forEach(c => gwChatBody.appendChild(c.cloneNode(true)));
-                gwChatBody.scrollTop = 99999;
+                
                 document.getElementById('gw-yes-no-actions').style.display = 'none';
                 
                 renderGWBoard(true); // render Pick Phase
@@ -1297,15 +1398,24 @@
                 const grid = document.getElementById('gw-grid');
                 grid.innerHTML = '';
                 
-                // Keep the same order for the whole game session
                 if(!state.games.gw.boardOrder) state.games.gw.boardOrder = shuffle([...GW_CHARS]);
                 
-                state.games.gw.boardOrder.forEach(ch => {
+                state.games.gw.boardOrder.forEach((ch, idx) => {
                     const card = document.createElement('div');
                     card.className = 'gw-card';
                     if(state.games.gw.eliminated.includes(ch.id)) card.classList.add('eliminated');
                     
-                    card.innerHTML = `<img src="guess-who/icons/${ch.img}" alt="${ch.name}"><span class="gw-name">${ch.name}</span>`;
+                    card.style.setProperty('--rot', (-30 + Math.random() * 12) + 'deg');
+                    card.style.animationDelay = (idx * 0.02) + "s";
+                    
+                    card.innerHTML = `
+                        <div class="photo-wrap">
+                            <img src="guess-who/icons/${ch.img}" alt="${ch.name}">
+                            <span class="chalk-tint"></span>
+                            <span class="chalk"></span>
+                        </div>
+                        <span class="gw-name">${ch.name}</span>
+                    `;
                     
                     if(isPickPhase) {
                         card.onclick = () => {
@@ -1349,7 +1459,7 @@
                     state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'gw_pick', role: st.role, secret: ch.id}});
                 } else {
                     setTimeout(() => {
-                        handleGameSync({act:'gw_pick', role: (st.role==='p1'?'p2':'p1'), secret: Math.floor(Math.random()*24)+1});
+                        handleGameSync({act:'gw_pick', role: (st.role==='p1'?'p2':'p1'), secret: GW_CHARS[Math.floor(Math.random()*24)].id});
                     }, 1000);
                 }
                 checkGWStart();
@@ -1371,7 +1481,7 @@
                     document.getElementById('gw-status-text').style.color = "var(--accent-green)";
                     document.getElementById('gw-secret-panel').style.display = 'flex';
                     renderGWBoard(false); // Play Phase
-                    fx.play('win');
+                    fx.winFanfare();
                 }
             }
 
@@ -1379,8 +1489,13 @@
                 const st = state.games.gw;
                 if(!st.active || !st.ready || !st.oppReady) return;
                 const idx = st.eliminated.indexOf(id);
-                if(idx === -1) { st.eliminated.push(id); fx.play('pop'); }
-                else { st.eliminated.splice(idx, 1); fx.play('pop'); }
+                if(idx === -1) { 
+                    st.eliminated.push(id); 
+                    fx.playChalk(); fx.vibrate(50);
+                } else { 
+                    st.eliminated.splice(idx, 1); 
+                    fx.playSwoosh(); fx.vibrate(30);
+                }
                 renderGWBoard(false);
             }
 
@@ -1389,7 +1504,8 @@
                 if(!st.active || !st.ready || !st.oppReady) return;
                 
                 fx.vibrate([30,50,30]);
-                if(confirm(`هل تريد تخمين "${ch.name}" كحل نهائي؟\n(تحذير: التخمين الخاطئ يجعلك تخسر اللعبة!)`)) {
+                if(confirm(`هل تريد تخمين "${ch.name}" كحل نهائي؟
+(تحذير: التخمين الخاطئ يجعلك تخسر اللعبة!)`)) {
                     const isCorrect = (ch.id === st.oppSecret);
                     if(!state.isAI) {
                         state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'gw_guess_result', winner: (isCorrect ? state.username : 'الخصم'), correctId: st.oppSecret}});
@@ -1409,14 +1525,14 @@
                 if(amIWinner) {
                     document.getElementById('gw-status-text').textContent = "🎉 مبروك! لقد فزت، التخمين صحيح! 🎉";
                     document.getElementById('gw-status-text').style.color = "var(--accent-green)";
-                    fx.play('win');
+                    fx.winFanfare();
                 } else {
                     document.getElementById('gw-status-text').textContent = `❌ لقد خسرت! الشخصية الصحيحة كانت: ${actualChar ? actualChar.name : ''} ❌`;
                     document.getElementById('gw-status-text').style.color = "var(--accent-red)";
-                    fx.play('lose');
+                    fx.loseBuzzer();
                 }
                 
-                setTimeout(forceCloseGame, 4000);
+                setTimeout(forceCloseGame, 4500);
             }
 
             window.gwSendReply = function(text) {
@@ -1435,7 +1551,7 @@
 
 
             // ==========================================
-            // GAME 5: KHAMENHA (تطبيق التعديلات السابقة)
+            // GAME 5: KHAMENHA 
             // ==========================================
             const wordDatabase = [
                 {w:"سوريا", h:"دولة عربية في بلاد الشام", c:"دولة"}, {w:"مصر", h:"بلد الأهرامات", c:"دولة"}, {w:"عراق", h:"بلد الرافدين", c:"دولة"}, {w:"جزائر", h:"دولة عربية في شمال أفريقيا", c:"دولة"}, {w:"مغرب", h:"بلد المليون شهيد", c:"دولة"},
@@ -1551,7 +1667,6 @@
                 let res = Array(st.w.length).fill('absent'); let wArr = st.w.split('');
                 let ptsThisTurn = 0;
 
-                // 🔴 معالجة حرف الـ "ا" و "أ" ليكونوا نفس الشيء 🔴
                 const norm = l => (l==='أ'||l==='إ'||l==='آ') ? 'ا' : l;
 
                 for(let i=0;i<st.w.length;i++) {
@@ -1592,7 +1707,7 @@
                 if(turnPts > 0) { st.pts += turnPts; showKFloat(turnPts); }
                 
                 if(win) { 
-                    fx.play('win'); st.streak++;
+                    fx.winFanfare(); st.streak++;
                     let totalWinPoints = 2 + ((st.maxA - st.row - 1) * 2) + (st.streak > 1 ? st.streak * 2 : 0);
                     st.pts += totalWinPoints; localStorage.setItem('chatlounge_k_pts', st.pts); localStorage.setItem('chatlounge_k_streak', st.streak);
                     document.getElementById('k-points').textContent = st.pts + " 🌟";
@@ -1602,7 +1717,7 @@
                 else { 
                     st.row++; 
                     if(st.row >= st.maxA) { 
-                        fx.play('lose'); st.streak = 0; localStorage.setItem('chatlounge_k_streak', 0);
+                        fx.loseBuzzer(); st.streak = 0; localStorage.setItem('chatlounge_k_streak', 0);
                         document.getElementById('k-hint-text').style.display='block'; document.getElementById('k-hint-text').textContent=`الكلمة كانت: ${st.w}`; 
                         setTimeout(forceCloseGame, 3000); 
                     } else { 
@@ -1653,11 +1768,11 @@
                     const diff = Math.abs(actual - st.target);
                     btn.disabled = true;
                     if(diff <= 0.2) {
-                        disp.style.color = "#2ecc71"; fx.play('win'); fx.vibrate([15,50,15]);
+                        disp.style.color = "#2ecc71"; fx.winFanfare(); fx.vibrate([15,50,15]);
                         st.pts += 15; localStorage.setItem('chatlounge_time_pts', st.pts);
                         document.getElementById('time-score').textContent = st.pts + " 🌟";
                         bcastScore('سيد الوقت ⏱️', 'TIME', st.pts);
-                    } else { disp.style.color = "#e74c3c"; fx.play('lose'); fx.vibrate(80); }
+                    } else { disp.style.color = "#e74c3c"; fx.loseBuzzer(); fx.vibrate(80); }
                     st.active = false; setTimeout(forceCloseGame, 2200);
                 }
             };
@@ -1690,7 +1805,7 @@
                     if(st.cards[c1]===st.cards[c2]) { 
                         st.matches++; st.flipped=[]; 
                         if(st.matches===8) { 
-                            st.active=false; fx.play('win'); 
+                            st.active=false; fx.winFanfare(); 
                             let timeSec = Math.floor((Date.now() - st.startTime) / 1000);
                             let finalScore = Math.max(10, 2000 - (st.steps * 20) - (timeSec * 10));
                             bcastScore('الذاكرة 🧠', 'MEMORY', finalScore); 
@@ -1757,7 +1872,7 @@
                     }
                 } else {
                     st.active = false; st.clickable = false;
-                    fx.play('lose');
+                    fx.loseBuzzer();
                     document.getElementById('simon-score').textContent = "خسرت!";
                     if(st.pts > 0) bcastScore('الذاكرة الصوتية 🎵', 'SIMON', st.pts);
                     setTimeout(forceCloseGame, 2000);
