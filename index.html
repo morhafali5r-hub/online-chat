@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>اونلاين شــات - Ultimate Arcade & AI Mode</title>
+    <title>اونلاين شــات</title>
     
     <!-- Supabase CDN -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -261,13 +261,13 @@
 
         .gw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; width: 100%; max-width: 650px; margin-top: 5px; }
         
-        /* Updated Guess Who Card styling (Chalk effect from Source 2) */
+        /* Updated Guess Who Card styling */
         .gw-card { 
             background: #fbf8f1; border: 2px solid var(--card-border); border-radius: 8px; 
             padding: 8px 8px 10px; display: flex; flex-direction: column; align-items: center; text-align: center;
             cursor: pointer; box-shadow: inset 0 1px 4px rgba(62,42,20,0.1), 0 3px 0px var(--card-border);
             position: relative; user-select: none; transition: transform 0.1s, box-shadow 0.15s;
-            animation: fadeUp 0.5s both;
+            animation: fadeUp 0.5s both; touch-action: pan-y; /* يسمح بالتمرير العمودي للموبايل */
         }
         .gw-card:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--card-border); }
         
@@ -1422,23 +1422,44 @@
                             if(!state.games.gw.ready) gwSelectSecret(ch);
                         };
                     } else {
-                        // Play Phase: Short tap = eliminate, Long press = guess
-                        let pressTimer;
-                        const onStart = () => {
+                        // Play Phase: Fix Mobile Scrolling VS Tap/Hold
+                        let pressTimer = null;
+                        let isScrolling = false;
+
+                        card.ontouchstart = (e) => {
                             if(!state.games.gw.active) return;
-                            pressTimer = setTimeout(() => { gwConfirmGuess(ch); }, 700);
+                            isScrolling = false;
+                            pressTimer = setTimeout(() => { 
+                                if(!isScrolling) { gwConfirmGuess(ch); pressTimer=null; } 
+                            }, 700);
                         };
-                        const onEnd = () => {
+                        card.ontouchmove = () => {
+                            isScrolling = true;
+                            if(pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+                        };
+                        card.ontouchend = (e) => {
+                            if(isScrolling) return; // Ignore if user was just scrolling the board
+                            if(pressTimer) {
+                                clearTimeout(pressTimer); 
+                                pressTimer = null;
+                                gwToggleEliminate(ch.id);
+                                if(e.cancelable) e.preventDefault(); // Prevent double triggering on mobile
+                            }
+                        };
+                        
+                        card.onmousedown = (e) => {
+                            if(!state.games.gw.active) return;
+                            pressTimer = setTimeout(() => { gwConfirmGuess(ch); pressTimer=null; }, 700);
+                        };
+                        card.onmouseleave = () => {
+                            if(pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+                        };
+                        card.onmouseup = (e) => {
                             if(pressTimer) {
                                 clearTimeout(pressTimer); pressTimer = null;
                                 gwToggleEliminate(ch.id);
                             }
                         };
-                        card.onmousedown = onStart;
-                        card.onmouseup = onEnd;
-                        card.onmouseleave = () => { if(pressTimer) { clearTimeout(pressTimer); pressTimer=null; } };
-                        card.ontouchstart = (e) => { e.preventDefault(); onStart(); };
-                        card.ontouchend = (e) => { e.preventDefault(); onEnd(); };
                     }
                     grid.appendChild(card);
                 });
