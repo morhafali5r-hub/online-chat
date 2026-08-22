@@ -159,9 +159,10 @@
 
         canvas { display: block; margin: 0 auto; touch-action: none; border-radius: 12px; max-width: 100%; flex-shrink: 0;}
 
-        /* 🔴 رقعة الشطرنج النظامية الجديدة 100% 🔴 */
+        /* Responsive Boards */
         .board-container-wrapper { width: 100%; display: flex; justify-content: center; padding: 10px 0;}
         
+        /* 🔴 رقعة الشطرنج النظامية 100% 🔴 */
         #chess-board { 
             display: grid; 
             grid-template-columns: repeat(8, 1fr); 
@@ -825,17 +826,11 @@
                     div.innerHTML = `<span class="msg-text">${isMine?`دعوت للعب ${m.game}`:`🎮 ${m.author} يتحداك بـ ${m.game}`}</span><button class="btn">${isMine?'انتظار':'قبول'}</button>`;
                     div.querySelector('button').onclick = ()=>{ 
                         if(!isMine) {
-                            const gCode = m.gameCode;
-                            const p1Name = m.author;
-                            const p2Name = state.username;
-                            const msgId = m.msgId;
-
+                            const gCode = m.gameCode; const p1Name = m.author; const p2Name = state.username; const msgId = m.msgId;
                             if(state.isAI) {
                                 handleGameSync({act:'accept', g:gCode, p1:p1Name, p2:p2Name, id:msgId});
                             } else {
-                                // إرسال للبث للطرف الثاني لفتح اللعبة لديه أيضاً
                                 state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'accept', g:gCode, p1:p1Name, p2:p2Name, id:msgId}});
-                                // فتح اللعبة محلياً عند الشخص الذي ضغط قبول فوراً
                                 triggerStartGame(gCode, p1Name, p2Name, msgId);
                             }
                         }
@@ -885,7 +880,7 @@
 
             function handleAIResponse(p) { setTimeout(()=> handleGameSync(p.payload), 100); }
 
-            // 🔴 دالة متزامنة لبدء اللعبة عند الطرفين 🔴
+            // 🔴 دالة متزامنة لبدء اللعبة 🔴
             function triggerStartGame(code, p1, p2, id) {
                 const mySymXO = (p1 === state.username) ? 'X' : 'O';
                 const mySymC4 = (p1 === state.username) ? 'R' : 'Y';
@@ -925,7 +920,7 @@
             }
 
             // ==========================================
-            // GAME 1: XO
+            // GAME 1: XO (مع تحديث محلي للإرسال)
             // ==========================================
             function startXO(sym, id) {
                 state.games.xo = { active:true, board:Array(9).fill(null), turn:'X', mySym:sym };
@@ -935,7 +930,14 @@
                 const inv = document.getElementById(`inv-${id}`); if(inv) { inv.querySelector('.msg-text').textContent = 'بدأت اللعبة'; inv.querySelector('button').style.display='none';}
                 openModal('xo-modal'); triggerAiXO();
             }
-            function xoClick(i) { const st = state.games.xo; if(st.active && st.turn===st.mySym && !st.board[i]) { if(state.isAI) handleGameSync({act:'xo_m', i, s:st.mySym}); else state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'xo_m', i, s:st.mySym}}); } }
+            function xoClick(i) { 
+                const st = state.games.xo; 
+                if(st.active && st.turn===st.mySym && !st.board[i]) { 
+                    updateXO(i, st.mySym); 
+                    checkXOWin(); 
+                    if(!state.isAI) state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'xo_m', i, s:st.mySym}}); 
+                } 
+            }
             function updateXO(i, s) { 
                 const st=state.games.xo; st.board[i]=s; const c = document.getElementById('xo-board').children[i]; c.textContent=s; c.classList.add(s==='X'?'x-mark':'o-mark'); st.turn=s==='X'?'O':'X'; document.getElementById('xo-status').textContent=st.turn===st.mySym?"دورك":"انتظر"; fx.play('pop'); 
                 triggerAiXO();
@@ -960,7 +962,7 @@
             }
 
             // ==========================================
-            // GAME 2: CONNECT 4
+            // GAME 2: CONNECT 4 (مع تحديث محلي للإرسال)
             // ==========================================
             function startC4(sym, id) {
                 state.games.c4 = { active:true, board:Array(6).fill().map(()=>Array(7).fill(null)), turn:'R', mySym:sym };
@@ -970,7 +972,14 @@
                 const inv = document.getElementById(`inv-${id}`); if(inv) { inv.querySelector('.msg-text').textContent = 'بدأت اللعبة'; inv.querySelector('button').style.display='none';}
                 openModal('c4-modal'); triggerAiC4();
             }
-            function c4Click(c) { const st = state.games.c4; if(st.active && st.turn===st.mySym && !st.board[0][c]) { if(state.isAI) handleGameSync({act:'c4_m', c, s:st.mySym}); else state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'c4_m', c, s:st.mySym}}); } }
+            function c4Click(c) { 
+                const st = state.games.c4; 
+                if(st.active && st.turn===st.mySym && !st.board[0][c]) { 
+                    dropC4(c, st.mySym); 
+                    checkC4Win(); 
+                    if(!state.isAI) state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'c4_m', c, s:st.mySym}}); 
+                } 
+            }
             function dropC4(c, s) {
                 const st = state.games.c4; let r=5; while(r>=0 && st.board[r][c]) r--; st.board[r][c]=s;
                 const cell = document.getElementById('c4-board').children[r*7+c];
@@ -1004,7 +1013,7 @@
             }
 
             // ==========================================
-            // GAME 3: CHESS (REAL ENGINE)
+            // GAME 3: CHESS (مع تحديث محلي للإرسال)
             // ==========================================
             const CHESS_START = [
                 ['♜','♞','♝','♛','♚','♝','♞','♜'], ['♟','♟','♟','♟','♟','♟','♟','♟'],
@@ -1097,11 +1106,14 @@
             function chessClick(r, c) {
                 const st = state.games.chess; if(!st.active || st.turn!==st.mySym) return;
                 const p = st.board[r][c];
+                
                 if(st.sel && st.validMoves.some(m => m.r===r && m.c===c)) {
-                    if(state.isAI) handleGameSync({act:'chess_m', f:st.sel, t:{r,c}});
-                    else state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'chess_m', f:st.sel, t:{r,c}}});
-                    st.sel = null; st.validMoves = []; return;
+                    const f = st.sel; const t = {r,c};
+                    moveChess(f, t);
+                    if(!state.isAI) state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'chess_m', f, t}});
+                    return;
                 }
+                
                 if(p && ((st.mySym==='W'&&isWhite(p)) || (st.mySym==='B'&&isBlack(p)))) { 
                     st.sel={r,c}; st.validMoves = getLegalMoves(r, c, st.board, st.mySym); drawChess(); 
                 } else { st.sel = null; st.validMoves = []; drawChess(); }
@@ -1228,7 +1240,7 @@
             }
 
             // ==========================================
-            // GAME 5: KHAMENHA (Guess-It System)
+            // GAME 5: KHAMENHA (تطبيق التعديلات السابقة)
             // ==========================================
             const wordDatabase = [
                 {w:"سوريا", h:"دولة عربية في بلاد الشام", c:"دولة"}, {w:"مصر", h:"بلد الأهرامات", c:"دولة"}, {w:"عراق", h:"بلد الرافدين", c:"دولة"}, {w:"جزائر", h:"دولة عربية في شمال أفريقيا", c:"دولة"}, {w:"مغرب", h:"بلد المليون شهيد", c:"دولة"},
@@ -1344,11 +1356,17 @@
                 let res = Array(st.w.length).fill('absent'); let wArr = st.w.split('');
                 let ptsThisTurn = 0;
 
+                // 🔴 معالجة حرف الـ "ا" و "أ" ليكونوا نفس الشيء 🔴
+                const norm = l => (l==='أ'||l==='إ'||l==='آ') ? 'ا' : l;
+
                 for(let i=0;i<st.w.length;i++) {
-                    if(g[i]===st.w[i]) { res[i]='correct'; wArr[i]=null; if(!st.locked.includes(i) && !st.discovered.includes(i)) { ptsThisTurn += 1; st.discovered.push(i); } }
+                    if(norm(g[i])===norm(st.w[i])) { res[i]='correct'; wArr[i]=null; if(!st.locked.includes(i) && !st.discovered.includes(i)) { ptsThisTurn += 1; st.discovered.push(i); } }
                 }
                 for(let i=0;i<st.w.length;i++) {
-                    if(res[i]==='absent' && wArr.includes(g[i])) { res[i]='present'; wArr[wArr.indexOf(g[i])]=null; }
+                    if(res[i]==='absent') {
+                        let matchIdx = wArr.findIndex(l => l && norm(l) === norm(g[i]));
+                        if(matchIdx !== -1) { res[i]='present'; wArr[matchIdx]=null; }
+                    }
                 }
 
                 const tiles = document.getElementById(`kr-${st.row}`).children;
@@ -1362,7 +1380,7 @@
                             else if(res[i]==='present' && !k.classList.contains('correct')) { k.classList.remove('absent'); k.classList.add('present'); }
                             else if(res[i]==='absent' && !k.classList.contains('correct') && !k.classList.contains('present')) k.classList.add('absent');
                         } 
-                        if(i===st.w.length-1) setTimeout(()=>kEnd(g===st.w, ptsThisTurn), 400); 
+                        if(i===st.w.length-1) setTimeout(()=>kEnd(Array.from(g).every((char, idx) => norm(char) === norm(st.w[idx])), ptsThisTurn), 400); 
                     }, i*200); 
                 });
             }
@@ -1404,7 +1422,7 @@
             }
 
             // ==========================================
-            // GAME 6: TIME GUESSER (0.2s margin)
+            // GAME 6: TIME GUESSER 
             // ==========================================
             function initTimeGame() {
                 const pts = parseInt(localStorage.getItem('chatlounge_time_pts')||0);
@@ -1450,7 +1468,7 @@
             };
 
             // ==========================================
-            // GAME 7: MEMORY MATCH (Time Based Score)
+            // GAME 7: MEMORY MATCH 
             // ==========================================
             function initMemory() {
                 const emj = ['🍎','🍌','🍉','🍇','🍓','🍒','🍍','🥝'];
@@ -1489,7 +1507,7 @@
             }
 
             // ==========================================
-            // GAME 8: SIMON SAYS (الذاكرة الصوتية - 9 ألوان)
+            // GAME 8: SIMON SAYS 
             // ==========================================
             window.initSimon = function() {
                 state.games.simon = { active:true, seq:[], step:0, pts:0, clickable:false };
