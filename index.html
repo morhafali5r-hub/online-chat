@@ -250,9 +250,6 @@
         #time-display-box { background: rgba(0,0,0,0.35); border: 2px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 18px 10px; margin: 0 auto; max-width: 280px; }
         #time-display { font-family:'Milan-Black'; font-size: clamp(3rem, 16vw, 4.5rem); color:#fff; text-shadow:0 4px 10px rgba(0,0,0,0.5); letter-spacing: 2px; line-height: 1; }
 
-        /* HOCKEY */
-        #hockeyCanvas { background: #141c24; border: 4px solid #ff3b4e; width: 100%; max-width: 320px; aspect-ratio: 3/4; }
-        
         /* 🔴 SIMON SAYS 🔴 */
         .simon-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 320px; aspect-ratio: 1; margin: 20px auto; }
         .simon-btn { width: 100%; height: 100%; border-radius: 12px; cursor: pointer; opacity: 0.6; transition: transform 0.1s, opacity 0.1s, box-shadow 0.1s; border: 2px solid rgba(255,255,255,0.2); box-sizing: border-box;}
@@ -267,6 +264,37 @@
         .sb-6 { background: #5ac8fa; color: #5ac8fa; }
         .sb-7 { background: #ff2d55; color: #ff2d55; }
         .sb-8 { background: #b08d57; color: #b08d57; }
+
+        /* 🔴 GUESS WHO (خمن من) MODAL & LAYOUT 🔴 */
+        #gw-modal .game-modal {
+            max-width: 900px; width: 95%; height: 85vh; padding: 0; overflow: hidden;
+            display: flex; flex-direction: row; /* Board Right, Chat Left for RTL */
+            background: linear-gradient(135deg, #fdfaf4, #f0e6d2);
+        }
+        .gw-chat-side { width: 320px; display: flex; flex-direction: column; background: #fff; border-right: 2px solid var(--card-border); }
+        .gw-board-side { flex: 1; display: flex; flex-direction: column; padding: 15px; overflow-y: auto; align-items: center; }
+        
+        @media (max-width: 768px) { 
+            #gw-modal .game-modal { flex-direction: column; height: 92vh; } 
+            .gw-chat-side { width: 100%; height: 40%; border-right: none; border-top: 2px solid var(--card-border); } 
+            .gw-board-side { height: 60%; } 
+        }
+
+        .gw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; width: 100%; max-width: 600px; margin-top: 15px; }
+        .gw-card { background: #fbf8f1; border: 2px solid var(--card-border); border-radius: 8px; padding: 6px; text-align: center; cursor: pointer; box-shadow: 0 3px 0 var(--card-border); position: relative; user-select: none; transition: transform 0.1s;}
+        .gw-card:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--card-border); }
+        .gw-card img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 4px; pointer-events: none; transition: filter 0.3s ease; }
+        .gw-card .gw-name { font-family: 'Kaswa-Modern', sans-serif; font-weight: bold; font-size: 0.9rem; margin-top: 4px; pointer-events: none; display: block; color: var(--text-dark);}
+        
+        .gw-card.eliminated img { filter: grayscale(100%); opacity: 0.6; }
+        .gw-card.eliminated::after { content: ''; position: absolute; top: 40%; left: 10%; right: 10%; height: 8px; background: rgba(211,47,47,0.85); transform: rotate(-25deg); border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.3); pointer-events: none;}
+        
+        .gw-top-panel { width: 100%; background: #fff; border: 1px solid var(--card-border); border-radius: 12px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .gw-secret-display { display: flex; align-items: center; gap: 10px; }
+        .gw-secret-display img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--card-border); object-fit: cover; }
+        
+        .gw-chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.02); }
+        .gw-yes-no-actions { padding: 10px; background: #fdfaf4; text-align: center; border-top: 1px solid var(--card-border); display: none; animation: popIn 0.2s ease;}
 
         #file-input { display: none; }
     </style>
@@ -337,8 +365,8 @@
             <div class="game-card" onclick="inviteGame('C4', 'أربعة تربح')">
                 <div style="text-align:right;"><h3 style="color:#2b4c5e;">أربعة تربح</h3><div class="hint">Connect 4</div></div><div class="gc-icon">🔴</div>
             </div>
-            <div class="game-card" onclick="inviteGame('HOCKEY', 'هوكي مباشر')">
-                <div style="text-align:right;"><h3 style="color:#ff3b4e;">هوكي</h3><div class="hint">طاولة الهواء</div></div><div class="gc-icon">🏑</div>
+            <div class="game-card" onclick="inviteGame('GUESS_WHO', 'خمن من؟')">
+                <div style="text-align:right;"><h3 style="color:#ff9500;">خمن من؟</h3><div class="hint">تخمين الشخصية</div></div><div class="gc-icon">🎭</div>
             </div>
             <div class="game-card" onclick="inviteGame('XO', 'تيك تاك تو')">
                 <div style="text-align:right;"><h3 style="color:#4a5d23;">تيك تاك تو</h3><div class="hint">X و O</div></div><div class="gc-icon">❌</div>
@@ -476,21 +504,53 @@
             </div>
         </div>
 
-        <!-- Hockey Modal -->
-        <div class="modal-overlay" id="hockey-modal">
-            <div class="game-modal" style="background: #141c24; border: 1px solid #ff3b4e;">
-                <div class="game-header">
-                    <button class="btn-close-game" style="background:rgba(255,255,255,0.1); color:#fff; border: 1px solid #ff3b4e; box-shadow:0 3px 0 #ff3b4e;" onclick="forceCloseGame()">🔙 رجوع</button>
-                    <h2 style="color:#fff; font-family:'Thmanyah-Bold';">هوكي</h2>
-                    <div></div>
+        <!-- 🔴 GUESS WHO (خمن من) MODAL 🔴 -->
+        <div class="modal-overlay" id="gw-modal">
+            <div class="game-modal">
+                <div class="gw-board-side">
+                    <div class="gw-top-panel">
+                        <h2 style="margin:0; font-family:'Thmanyah-Bold'; font-size:1.6rem;">خمن من؟ 🎭</h2>
+                        <button class="btn-close-game" onclick="forceCloseGame()" style="padding:4px 10px; font-size:1rem;">خروج 🚪</button>
+                    </div>
+                    
+                    <div id="gw-status-text" class="hint" style="margin-bottom:10px; font-weight:bold; font-size:1.1rem; color:var(--accent-red);">اختر شخصيتك السرية للبدء</div>
+                    
+                    <!-- Secret Info Panel (Hidden initially) -->
+                    <div id="gw-secret-panel" style="display:none; width:100%; justify-content:space-between; align-items:center; background:#fff; padding:10px; border-radius:12px; border:1px dashed var(--accent-gold); margin-bottom:15px;">
+                        <span style="font-family:'Gali'; font-size:0.95rem; font-weight:bold;">شخصيتك السرية:</span>
+                        <div class="gw-secret-display">
+                            <img id="gw-my-secret-img" src="" alt="">
+                            <span id="gw-my-secret-name" style="font-family:'Kaswa-Modern'; font-weight:bold;"></span>
+                        </div>
+                    </div>
+
+                    <p style="font-family:'Panorama-Naskh'; font-size:0.9rem; color:rgba(0,0,0,0.6); margin:0;">اضغط لاستبعاد شخصية، أو مطولاً لتخمين الخصم كحل نهائي</p>
+                    
+                    <div class="gw-grid" id="gw-grid">
+                        <!-- Board rendered via JS -->
+                    </div>
                 </div>
-                <div style="display:flex; justify-content:space-between; font-family:'Milan-Black'; font-size:2.5rem; padding:0 20px; margin-bottom:10px;">
-                    <span id="hock-p2" style="color:#ff3b4e;">0</span>
-                    <span id="hock-st" style="color:#fff; font-size:1rem; font-family:'Gali'; align-self:center;">بانتظار خصم</span>
-                    <span id="hock-p1" style="color:#5ef1ff;">0</span>
-                </div>
-                <div style="position:relative; width:100%; max-width:320px; margin:0 auto;">
-                    <canvas id="hockeyCanvas" width="300" height="400" style="width:100%; height:auto; aspect-ratio:3/4;"></canvas>
+                
+                <div class="gw-chat-side">
+                    <div style="background:rgba(255,255,255,0.8); padding:10px; border-bottom:1px solid var(--card-border); text-align:center; font-family:'Thmanyah-Bold'; font-size:1.2rem; color:var(--accent-gold);">دردشة اللعبة</div>
+                    <div class="gw-chat-body" id="gw-chat-body">
+                        <!-- Syncs with main chat -->
+                    </div>
+                    
+                    <div id="gw-yes-no-actions" class="gw-yes-no-actions">
+                        <span style="font-family:'Gali'; font-size:0.9rem; margin-bottom:8px; display:block; font-weight:bold;">هل سألك الخصم؟ أجب فوراً:</span>
+                        <div style="display:flex; justify-content:center; gap:10px;">
+                            <button class="btn" onclick="gwSendReply('نعم ✅')" style="flex:1; padding:8px; background:var(--accent-green);">نعم ✅</button>
+                            <button class="btn" onclick="gwSendReply('لا ❌')" style="flex:1; padding:8px; background:var(--accent-red);">لا ❌</button>
+                        </div>
+                    </div>
+
+                    <div class="chat-footer" style="border-top:1px solid var(--card-border);">
+                        <div class="chat-input-wrapper">
+                            <input type="text" id="gw-chat-input" placeholder="اسأل سؤالاً (هل يرتدي قبعة؟)..." autocomplete="off">
+                        </div>
+                        <button id="gw-send-btn" class="icon-btn-chat" style="color:var(--accent-green);font-size:1.6rem; padding:5px;">➤</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -547,9 +607,9 @@
                 activeModal: null,
                 games: {
                     xo: { active:false, board:Array(9).fill(null), turn:'X', mySym:null },
-                    hockey: { active:false, role:null, loop:null, p1:{x:150,y:370,r:22}, p2:{x:150,y:30,r:22}, puck:{x:150,y:200,vx:0,vy:0,r:14}, s1:0, s2:0, ls:0 },
                     c4: { active:false, board:Array(6).fill().map(()=>Array(7).fill(null)), turn:'R', mySym:null },
                     chess: { active:false, board:[], turn:'W', mySym:null, sel:null, validMoves:[] },
+                    gw: { active:false, role:null, mySecret:null, oppSecret:null, ready:false, oppReady:false, eliminated:[] },
                     kham: { active:false, w:'', h:'', c:'', g:[], row:0, pts:parseInt(localStorage.getItem('chatlounge_k_pts')||'0'), streak:parseInt(localStorage.getItem('chatlounge_k_streak')||'0'), maxA:7, hB:false, rmB:false, locked:[], discovered:[] },
                     time: { active:false, loop:null, pts:parseInt(localStorage.getItem('chatlounge_time_pts')||'0') },
                     mem: { active:false, cards:[], flipped:[], matches:0, steps:0, startTime:0 },
@@ -678,7 +738,13 @@
                 m.created_at = new Date().toISOString(); m.color = state.userColor; 
                 renderMsg(m, true); fx.play('pop'); fx.vibrate(10); saveToLocalHistory(m);
                 if(state.isAI) {
-                    if(m.type === 'text') setTimeout(()=>renderMsg({type:'text', content:'أنا مجرد روبوت للاختبار 😅 تحداك في لعبة!', author:'الروبوت AI', color:'#00bcd4'}, false), 1000);
+                    if(m.type === 'text') {
+                        if(state.games.gw && state.games.gw.active) {
+                            setTimeout(()=>renderMsg({type:'text', content: (Math.random()>0.5?'نعم ✅':'لا ❌'), author:'الروبوت AI', color:'#00bcd4'}, false), 1500);
+                        } else {
+                            setTimeout(()=>renderMsg({type:'text', content:'أنا مجرد روبوت للاختبار 😅 تحداك في لعبة!', author:'الروبوت AI', color:'#00bcd4'}, false), 1000);
+                        }
+                    }
                     if(m.type === 'game_invite') setTimeout(()=>handleGameSync({act:'accept', g:m.gameCode, p1:m.author, p2:'الروبوت AI', id:m.msgId}), 1200);
                     return;
                 }
@@ -854,7 +920,21 @@
                         ${time}`;
                     }
                 }
+                
                 UI.chatBody.appendChild(div); UI.chatBody.scrollTop = 99999;
+                
+                // Sync with Guess Who Chat if active
+                if(state.games.gw && state.games.gw.active && document.getElementById('gw-modal').classList.contains('active')) {
+                    const gwDiv = div.cloneNode(true);
+                    const gwChatBody = document.getElementById('gw-chat-body');
+                    gwChatBody.appendChild(gwDiv);
+                    gwChatBody.scrollTop = 99999;
+                    
+                    // Show Quick Reply Yes/No if opponent sent text
+                    if(!isMine && !isHist && m.type === 'text' && m.author !== 'الروبوت AI') {
+                        document.getElementById('gw-yes-no-actions').style.display = 'block';
+                    }
+                }
             }
 
             // ==========================================
@@ -875,7 +955,7 @@
                 if(code==='SIMON') initSimon();
                 if(code==='TIME') initTimeGame(); 
                 if(code==='MEMORY') initMemory();
-                if(['XO','HOCKEY','C4','CHESS'].includes(code)) inviteGame(code, code);
+                if(['XO','GUESS_WHO','C4','CHESS'].includes(code)) inviteGame(code, code);
             };
 
             function handleAIResponse(p) { setTimeout(()=> handleGameSync(p.payload), 100); }
@@ -885,12 +965,12 @@
                 const mySymXO = (p1 === state.username) ? 'X' : 'O';
                 const mySymC4 = (p1 === state.username) ? 'R' : 'Y';
                 const mySymChess = (p1 === state.username) ? 'W' : 'B';
-                const hockRole = (p1 === state.username) ? 'p1' : 'p2';
+                const roleGW = (p1 === state.username) ? 'p1' : 'p2';
 
                 if(code === 'XO') startXO(mySymXO, id);
                 else if(code === 'C4') startC4(mySymC4, id);
                 else if(code === 'CHESS') startChess(mySymChess, id);
-                else if(code === 'HOCKEY') startHockey(hockRole, id);
+                else if(code === 'GUESS_WHO') startGW(roleGW, id);
             }
 
             function handleGameSync(p) {
@@ -898,9 +978,10 @@
                     triggerStartGame(p.g, p.p1, p.p2, p.id);
                 }
                 else if(p.act==='xo_m') { updateXO(p.i, p.s); checkXOWin(); }
-                else if(p.act==='hock_s' && state.games.hockey.active) syncHockey(p.st);
                 else if(p.act==='c4_m') { dropC4(p.c, p.s); checkC4Win(); }
                 else if(p.act==='chess_m') { moveChess(p.f, p.t); }
+                else if(p.act==='gw_pick') { gwHandlePick(p); }
+                else if(p.act==='gw_guess_result') { gwHandleGuessResult(p); }
             }
 
             function openModal(id) { if(state.activeModal) document.getElementById(state.activeModal).classList.remove('active'); state.activeModal=id; document.getElementById(id).classList.add('active'); fx.play('pop'); }
@@ -909,9 +990,8 @@
                 if(state.activeModal) {
                     document.getElementById(state.activeModal).classList.remove('active'); 
                     state.activeModal=null;
-                    if(state.games.hockey.active) { state.games.hockey.active=false; cancelAnimationFrame(state.games.hockey.loop); }
                     if(state.games.time && state.games.time.active) { state.games.time.active=false; state.games.time.running=false; cancelAnimationFrame(state.games.time.loop); }
-                    state.games.xo.active = false; state.games.c4.active = false; state.games.chess.active = false; state.games.kham.active = false; state.games.mem.active = false; state.games.simon.active = false;
+                    state.games.xo.active = false; state.games.c4.active = false; state.games.chess.active = false; state.games.kham.active = false; state.games.mem.active = false; state.games.simon.active = false; state.games.gw.active = false;
                 }
             };
 
@@ -1172,72 +1252,187 @@
             }
 
             // ==========================================
-            // GAME 4: HOCKEY 
+            // GAME 4: GUESS WHO (خمن من؟) 
             // ==========================================
-            const hC = document.getElementById('hockeyCanvas'); const hCtx = hC.getContext('2d');
-            function startHockey(role, id) {
-                state.games.hockey = { active:true, role, loop:null, p1:{x:150,y:370,r:22}, p2:{x:150,y:30,r:22}, puck:{x:150,y:200,vx:0,vy:role==='p1'?5:0,r:14}, s1:0, s2:0, ls:0 };
-                document.getElementById('hock-p1').textContent='0'; document.getElementById('hock-p2').textContent='0'; document.getElementById('hock-st').textContent="العب!";
-                const inv = document.getElementById(`inv-${id}`); if(inv) { inv.querySelector('.msg-text').textContent = 'بدأت اللعبة'; inv.querySelector('button').style.display='none';}
-                openModal('hockey-modal');
-                state.games.hockey.loop = requestAnimationFrame(hockLoop);
-            }
+            const GW_CHARS = [
+                { id: 1,  name: "ألفريد", img: "alfred.jpg" }, { id: 2,  name: "آن",      img: "anne.jpg" },
+                { id: 3,  name: "أنيتا",   img: "antina.jpg" }, { id: 4,  name: "برنارد",  img: "bernard.jpg" },
+                { id: 5,  name: "بيل",     img: "bill.jpg" },   { id: 6,  name: "كارول",   img: "carol.jpg" },
+                { id: 7,  name: "تشارلز",  img: "charles.jpg" }, { id: 8,  name: "ديفيد",   img: "david.jpg" },
+                { id: 9,  name: "إريك",    img: "eric.jpg" },   { id: 10, name: "فرانس",   img: "frans.jpg" },
+                { id: 11, name: "جورج",    img: "goerge.jpg" }, { id: 12, name: "هيرمان",  img: "herman.jpg" },
+                { id: 13, name: "جو",      img: "joe.jpg" },    { id: 14, name: "ليز",     img: "liz.jpg" },
+                { id: 15, name: "ماريا",   img: "maria.jpg" },  { id: 16, name: "ماكس",    img: "max.jpg" },
+                { id: 17, name: "بول",     img: "paul.jpg" },   { id: 18, name: "بيتر",    img: "peter.jpg" },
+                { id: 19, name: "فيليب",   img: "philip.jpg" }, { id: 20, name: "ريتشارد", img: "richard.jpg" },
+                { id: 21, name: "روبرت",   img: "robert.jpg" }, { id: 22, name: "سام",     img: "sam.jpg" },
+                { id: 23, name: "سوزان",   img: "susan.jpg" },  { id: 24, name: "توم",     img: "tom.jpg" }
+            ];
             
-            function handleHockeyMove(e) {
-                if(!state.games.hockey.active) return; const rect = hC.getBoundingClientRect();
-                let clientX, clientY;
-                if(e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; e.preventDefault(); } 
-                else { clientX = e.clientX; clientY = e.clientY; }
-                
-                const scaleX = 300 / rect.width; const scaleY = 400 / rect.height;
-                const x = (clientX - rect.left) * scaleX; const y = (clientY - rect.top) * scaleY;
-                
-                if(state.games.hockey.role === 'p1' && y > 200) { state.games.hockey.p1.x=x; state.games.hockey.p1.y=y; }
-                if(state.games.hockey.role === 'p2' && y < 200) { state.games.hockey.p2.x=x; state.games.hockey.p2.y=y; }
+            function shuffle(array) {
+                let curr = array.length, rnd;
+                while (curr != 0) { rnd = Math.floor(Math.random() * curr); curr--; [array[curr], array[rnd]] = [array[rnd], array[curr]]; }
+                return array;
             }
-            hC.addEventListener('pointermove', handleHockeyMove);
-            hC.addEventListener('touchmove', handleHockeyMove, {passive: false});
 
-            function syncHockey(srv) { const st = state.games.hockey; if(st.role==='p2') {st.p1=srv.p1; st.puck=srv.puck; if(srv.s1!==st.s1||srv.s2!==st.s2){st.s1=srv.s1;st.s2=srv.s2;fx.play('win'); document.getElementById('hock-p1').textContent=st.s1; document.getElementById('hock-p2').textContent=st.s2;} } if(st.role==='p1') st.p2=srv.p2; }
-
-            function hockLoop() {
-                const st = state.games.hockey; if(!st.active) return;
-                hCtx.fillStyle='#141c24'; hCtx.fillRect(0,0,300,400); hCtx.strokeStyle='#fff'; hCtx.beginPath(); hCtx.moveTo(0,200); hCtx.lineTo(300,200); hCtx.stroke();
-                hCtx.beginPath(); hCtx.arc(150, 200, 30, 0, Math.PI*2); hCtx.stroke();
+            function startGW(role, id) {
+                state.games.gw = { active: true, role: role, mySecret: null, oppSecret: null, ready: false, oppReady: false, eliminated: [] };
+                const inv = document.getElementById(`inv-${id}`); if(inv) { inv.querySelector('.msg-text').textContent = 'بدأت اللعبة'; inv.querySelector('button').style.display='none';}
                 
-                if(st.role==='p1') {
-                    st.puck.x+=st.puck.vx; st.puck.y+=st.puck.vy;
-                    if(st.puck.x<10||st.puck.x>290) st.puck.vx*=-1;
-                    if(st.puck.y<10) { if(st.puck.x>100&&st.puck.x<200){st.s1++;fx.play('win');st.puck={x:150,y:200,vx:0,vy:5};} else st.puck.vy*=-1; }
-                    if(st.puck.y>390) { if(st.puck.x>100&&st.puck.x<200){st.s2++;fx.play('win');st.puck={x:150,y:200,vx:0,vy:-5};} else st.puck.vy*=-1; }
+                document.getElementById('gw-secret-panel').style.display = 'none';
+                document.getElementById('gw-status-text').textContent = "اختر شخصيتك السرية للبدء";
+                
+                // Copy Main Chat History into GW Chat
+                const gwChatBody = document.getElementById('gw-chat-body');
+                gwChatBody.innerHTML = '';
+                Array.from(UI.chatBody.children).forEach(c => gwChatBody.appendChild(c.cloneNode(true)));
+                gwChatBody.scrollTop = 99999;
+                document.getElementById('gw-yes-no-actions').style.display = 'none';
+                
+                renderGWBoard(true); // render Pick Phase
+                openModal('gw-modal');
+            }
+
+            function renderGWBoard(isPickPhase) {
+                const grid = document.getElementById('gw-grid');
+                grid.innerHTML = '';
+                
+                // Keep the same order for the whole game session
+                if(!state.games.gw.boardOrder) state.games.gw.boardOrder = shuffle([...GW_CHARS]);
+                
+                state.games.gw.boardOrder.forEach(ch => {
+                    const card = document.createElement('div');
+                    card.className = 'gw-card';
+                    if(state.games.gw.eliminated.includes(ch.id)) card.classList.add('eliminated');
                     
-                    if(state.isAI) { st.p2.x += (st.puck.x - st.p2.x) * 0.12; if(st.p2.x<20) st.p2.x=20; if(st.p2.x>280) st.p2.x=280; }
-
-                    const col = (pad) => { 
-                        const dx=st.puck.x-pad.x, dy=st.puck.y-pad.y, d=Math.sqrt(dx*dx+dy*dy); 
-                        if(d < st.puck.r + pad.r) { 
-                            const overlap = (st.puck.r + pad.r) - d;
-                            const nx = dx/d, ny = dy/d;
-                            st.puck.x += nx * overlap; st.puck.y += ny * overlap;
-                            const speed = Math.sqrt(st.puck.vx**2+st.puck.vy**2); 
-                            st.puck.vx=nx*(speed+2); st.puck.vy=ny*(speed+2); 
-                            fx.play('hit'); 
-                        } 
-                    };
-                    col(st.p1); col(st.p2); st.puck.vx*=0.99; st.puck.vy*=0.99;
-                    if(!state.isAI && Date.now()-st.ls>30) { state.channel.send({type:'broadcast',event:'game_sync',payload:{act:'hock_s', st:{p1:st.p1,puck:st.puck,s1:st.s1,s2:st.s2}}}); st.ls=Date.now(); }
-                    document.getElementById('hock-p1').textContent=st.s1; document.getElementById('hock-p2').textContent=st.s2;
-                } else if(st.role==='p2' && !state.isAI) {
-                    if(Date.now()-st.ls>30) { state.channel.send({type:'broadcast',event:'game_sync',payload:{act:'hock_s', st:{p2:st.p2}}}); st.ls=Date.now(); }
-                }
-
-                hCtx.fillStyle='#5ef1ff'; hCtx.beginPath(); hCtx.arc(st.p1.x,st.p1.y,st.p1.r,0,Math.PI*2); hCtx.fill();
-                hCtx.fillStyle='#ff3b4e'; hCtx.beginPath(); hCtx.arc(st.p2.x,st.p2.y,st.p2.r,0,Math.PI*2); hCtx.fill();
-                hCtx.fillStyle='#fff'; hCtx.beginPath(); hCtx.arc(st.puck.x,st.puck.y,st.puck.r,0,Math.PI*2); hCtx.fill();
-
-                if(st.s1>=5||st.s2>=5) { st.active=false; document.getElementById('hock-st').textContent=st.s1>=5?"فاز الأزرق!":"فاز الأحمر!"; setTimeout(forceCloseGame, 2000); }
-                else st.loop = requestAnimationFrame(hockLoop);
+                    card.innerHTML = `<img src="guess-who/icons/${ch.img}" alt="${ch.name}"><span class="gw-name">${ch.name}</span>`;
+                    
+                    if(isPickPhase) {
+                        card.onclick = () => {
+                            if(!state.games.gw.ready) gwSelectSecret(ch);
+                        };
+                    } else {
+                        // Play Phase: Short tap = eliminate, Long press = guess
+                        let pressTimer;
+                        const onStart = () => {
+                            if(!state.games.gw.active) return;
+                            pressTimer = setTimeout(() => { gwConfirmGuess(ch); }, 700);
+                        };
+                        const onEnd = () => {
+                            if(pressTimer) {
+                                clearTimeout(pressTimer); pressTimer = null;
+                                gwToggleEliminate(ch.id);
+                            }
+                        };
+                        card.onmousedown = onStart;
+                        card.onmouseup = onEnd;
+                        card.onmouseleave = () => { if(pressTimer) { clearTimeout(pressTimer); pressTimer=null; } };
+                        card.ontouchstart = (e) => { e.preventDefault(); onStart(); };
+                        card.ontouchend = (e) => { e.preventDefault(); onEnd(); };
+                    }
+                    grid.appendChild(card);
+                });
             }
+
+            function gwSelectSecret(ch) {
+                const st = state.games.gw;
+                st.mySecret = ch.id;
+                st.ready = true;
+                
+                document.getElementById('gw-status-text').textContent = "بانتظار اختيار الخصم...";
+                document.getElementById('gw-my-secret-img').src = `guess-who/icons/${ch.img}`;
+                document.getElementById('gw-my-secret-name').textContent = ch.name;
+                
+                fx.play('pop');
+                
+                if(!state.isAI) {
+                    state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'gw_pick', role: st.role, secret: ch.id}});
+                } else {
+                    setTimeout(() => {
+                        handleGameSync({act:'gw_pick', role: (st.role==='p1'?'p2':'p1'), secret: Math.floor(Math.random()*24)+1});
+                    }, 1000);
+                }
+                checkGWStart();
+            }
+
+            function gwHandlePick(p) {
+                const st = state.games.gw;
+                if(p.role !== st.role) {
+                    st.oppSecret = p.secret;
+                    st.oppReady = true;
+                    checkGWStart();
+                }
+            }
+
+            function checkGWStart() {
+                const st = state.games.gw;
+                if(st.ready && st.oppReady && st.active) {
+                    document.getElementById('gw-status-text').textContent = "اللعبة بدأت! استبعد الشخصيات وأسأل الخصم في الشات";
+                    document.getElementById('gw-status-text').style.color = "var(--accent-green)";
+                    document.getElementById('gw-secret-panel').style.display = 'flex';
+                    renderGWBoard(false); // Play Phase
+                    fx.play('win');
+                }
+            }
+
+            function gwToggleEliminate(id) {
+                const st = state.games.gw;
+                if(!st.active || !st.ready || !st.oppReady) return;
+                const idx = st.eliminated.indexOf(id);
+                if(idx === -1) { st.eliminated.push(id); fx.play('pop'); }
+                else { st.eliminated.splice(idx, 1); fx.play('pop'); }
+                renderGWBoard(false);
+            }
+
+            function gwConfirmGuess(ch) {
+                const st = state.games.gw;
+                if(!st.active || !st.ready || !st.oppReady) return;
+                
+                fx.vibrate([30,50,30]);
+                if(confirm(`هل تريد تخمين "${ch.name}" كحل نهائي؟\n(تحذير: التخمين الخاطئ يجعلك تخسر اللعبة!)`)) {
+                    const isCorrect = (ch.id === st.oppSecret);
+                    if(!state.isAI) {
+                        state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'gw_guess_result', winner: (isCorrect ? state.username : 'الخصم'), correctId: st.oppSecret}});
+                    }
+                    gwHandleGuessResult({winner: (isCorrect ? state.username : 'الخصم'), correctId: st.oppSecret});
+                }
+            }
+
+            function gwHandleGuessResult(p) {
+                const st = state.games.gw;
+                if(!st.active) return;
+                st.active = false;
+                
+                const amIWinner = (p.winner === state.username);
+                const actualChar = GW_CHARS.find(c => c.id === p.correctId);
+                
+                if(amIWinner) {
+                    document.getElementById('gw-status-text').textContent = "🎉 مبروك! لقد فزت، التخمين صحيح! 🎉";
+                    document.getElementById('gw-status-text').style.color = "var(--accent-green)";
+                    fx.play('win');
+                } else {
+                    document.getElementById('gw-status-text').textContent = `❌ لقد خسرت! الشخصية الصحيحة كانت: ${actualChar ? actualChar.name : ''} ❌`;
+                    document.getElementById('gw-status-text').style.color = "var(--accent-red)";
+                    fx.play('lose');
+                }
+                
+                setTimeout(forceCloseGame, 4000);
+            }
+
+            window.gwSendReply = function(text) {
+                document.getElementById('gw-yes-no-actions').style.display = 'none';
+                sendMsg({room_id:state.roomId, type:'text', content:text, author:state.username});
+            };
+
+            document.getElementById('gw-send-btn').onclick = () => {
+                const t = document.getElementById('gw-chat-input').value.trim();
+                if(t) {
+                    sendMsg({room_id:state.roomId, type:'text', content:t, author:state.username});
+                    document.getElementById('gw-chat-input').value = '';
+                }
+            };
+            document.getElementById('gw-chat-input').onkeypress = (e) => { if(e.key === 'Enter') document.getElementById('gw-send-btn').click(); };
+
 
             // ==========================================
             // GAME 5: KHAMENHA (تطبيق التعديلات السابقة)
