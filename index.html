@@ -159,29 +159,51 @@
 
         canvas { display: block; margin: 0 auto; touch-action: none; border-radius: 12px; max-width: 100%; flex-shrink: 0;}
 
-        /* Responsive Boards */
+        /* 🔴 رقعة الشطرنج النظامية الجديدة 100% 🔴 */
         .board-container-wrapper { width: 100%; display: flex; justify-content: center; padding: 10px 0;}
         
-        #chess-board { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; max-width: 380px; aspect-ratio: 1; border: 4px solid #5c442c; border-radius: 4px; box-sizing: border-box;}
-        .chess-cell { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; font-size: clamp(1.2rem, 5vw, 2.2rem); cursor: pointer; position: relative; }
-        .chess-white { background: #e8dcc4; } .chess-black { background: #8b6b4a; }
+        #chess-board { 
+            display: grid; 
+            grid-template-columns: repeat(8, 1fr); 
+            grid-template-rows: repeat(8, 1fr); 
+            width: 360px; 
+            height: 360px; 
+            max-width: 100%; 
+            aspect-ratio: 1; 
+            border: 4px solid #5c442c; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            margin: 0 auto;
+        }
+        .chess-cell { 
+            width: 100%; 
+            height: 100%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: clamp(1.2rem, 4vw, 2rem); 
+            cursor: pointer; 
+            position: relative; 
+        }
+        .chess-white { background: #e8dcc4; } 
+        .chess-black { background: #8b6b4a; }
         .chess-piece { text-shadow: 0 1px 2px rgba(0,0,0,0.5); pointer-events: none;}
         .chess-cell.selected { background: rgba(176, 141, 87, 0.8); }
         .chess-valid::after { content:''; position:absolute; width:25%; height:25%; background:rgba(0,0,0,0.4); border-radius:50%; pointer-events: none; }
         .chess-check { box-shadow: inset 0 0 15px red; }
 
-        .xo-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; max-width: 320px; aspect-ratio: 1; box-sizing: border-box; }
+        .xo-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; max-width: 320px; aspect-ratio: 1; box-sizing: border-box; margin: 0 auto;}
         .xo-cell { width: 100%; height: 100%; background: #fff; border: 1px solid var(--card-border); border-radius: 12px; font-family: 'Milan-Black'; font-size: clamp(3rem, 10vw, 4rem); display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 0 var(--card-border);}
         .xo-cell:active { transform: translateY(4px); box-shadow: 0 0 0; }
         .xo-cell.x-mark { color: var(--accent-red); } .xo-cell.o-mark { color: var(--accent-green); }
 
-        #c4-board { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: 100%; max-width: 380px; aspect-ratio: 7/6; background: #2b4c5e; padding: 6px; border-radius: 8px; cursor: pointer; box-sizing: border-box;}
+        #c4-board { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: 100%; max-width: 380px; aspect-ratio: 7/6; background: #2b4c5e; padding: 6px; border-radius: 8px; cursor: pointer; box-sizing: border-box; margin: 0 auto;}
         .c4-cell { width: 100%; height: 100%; background: #1a2c38; border-radius: 50%; box-shadow: inset 0 3px 5px rgba(0,0,0,0.5);}
         .c4-token-red { width: 100%; height: 100%; background: #ff3b4e; border-radius: 50%; animation: drop 0.4s ease-in; }
         .c4-token-yellow { width: 100%; height: 100%; background: #ffd700; border-radius: 50%; animation: drop 0.4s ease-in; }
         @keyframes drop { 0%{transform:translateY(-200px);} 100%{transform:translateY(0);} }
 
-        #mem-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-width: 380px; aspect-ratio: 1; perspective: 1000px; box-sizing: border-box;}
+        #mem-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-width: 380px; aspect-ratio: 1; perspective: 1000px; box-sizing: border-box; margin: 0 auto;}
         .mem-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.4s; cursor: pointer; }
         .mem-face { position: absolute; inset: 0; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; border-radius: 8px; font-size: clamp(1.5rem, 6vw, 2.2rem); box-shadow: 0 4px 0 rgba(0,0,0,0.1);}
         .mem-front { background: var(--accent-gold); border: 2px solid #fff; }
@@ -477,7 +499,6 @@
     <script>
         window.addEventListener('DOMContentLoaded', () => {
 
-            // 🔴 إضافة مصفوفة لمنع تكرار الرسائل 🔴
             const renderedMsgs = new Set();
 
             // ==========================================
@@ -594,7 +615,6 @@
                 UI.chatBody.innerHTML=''; hist.forEach(m => renderMsg(m, m.author===state.username, true));
             }
             
-            // 🔴 تعديل: منع الحفظ المكرر في السجل المحلي 🔴
             function saveToLocalHistory(m) {
                 const hist = JSON.parse(localStorage.getItem(`chat_${state.roomId}`) || '[]');
                 const msgKey = m.created_at + m.author + (m.content || m.url || '');
@@ -626,7 +646,6 @@
                 } catch(e) {}
             }
 
-            // 🔴 إضافة نظام البث الفوري (Broadcast) للرسائل 🔴
             function setupChannel() {
                 if(state.isAI) return;
                 state.channel = supabase.channel(`rm_${state.roomId}`, {config:{presence:{key:state.username}}});
@@ -635,7 +654,6 @@
                     for(const k in p) users.push(k); updateOnlineList(users);
                 });
                 
-                // الاستقبال الفوري عبر Broadcast (يعمل حتى لو الداتا بيز معطلة)
                 state.channel.on('broadcast', {event:'chat_msg'}, p => {
                     if(p.payload.author !== state.username) { 
                         fx.play('pop'); fx.vibrate(10); 
@@ -644,7 +662,6 @@
                     }
                 });
 
-                // الاستقبال من الداتا بيز كاحتياطي
                 state.channel.on('postgres_changes', {event:'INSERT', schema:'public', table:'chatlounge_messages', filter:`room_id=eq.${state.roomId}`}, p=>{
                     if(p.new.author!==state.username) { 
                         fx.play('pop'); fx.vibrate(10); 
@@ -656,7 +673,6 @@
                 state.channel.subscribe(async(st)=>{ if(st==='SUBSCRIBED') await state.channel.track({u:state.username}); });
             }
 
-            // 🔴 تعديل الإرسال لدعم البث الفوري 🔴
             async function sendMsg(m) {
                 m.created_at = new Date().toISOString(); m.color = state.userColor; 
                 renderMsg(m, true); fx.play('pop'); fx.vibrate(10); saveToLocalHistory(m);
@@ -666,7 +682,6 @@
                     return;
                 }
                 
-                // الإرسال بالهواء مباشرة لتسريع الشات
                 if(state.channel) {
                     state.channel.send({type:'broadcast', event:'chat_msg', payload: m});
                 }
@@ -676,7 +691,6 @@
                 if(m.type === 'game_invite') urlStr = `${m.gameCode}|${m.msgId}|${m.color}`;
                 if(m.type === 'text') urlStr = m.color;
                 
-                // الحفظ في قاعدة البيانات
                 try {
                     await supabase.from('chatlounge_messages').insert([{ room_id: m.room_id, author: m.author, content: m.content, type: m.type, url: urlStr }]);
                 } catch(e) {}
@@ -791,7 +805,6 @@
                 e.target.value = '';
             };
 
-            // 🔴 تعديل دالة Render لفلترة الرسائل المكررة 🔴
             function renderMsg(m, isMine, isHist=false) {
                 const msgKey = m.created_at + m.author + (m.content || m.url || '');
                 if(renderedMsgs.has(msgKey)) return;
@@ -812,8 +825,19 @@
                     div.innerHTML = `<span class="msg-text">${isMine?`دعوت للعب ${m.game}`:`🎮 ${m.author} يتحداك بـ ${m.game}`}</span><button class="btn">${isMine?'انتظار':'قبول'}</button>`;
                     div.querySelector('button').onclick = ()=>{ 
                         if(!isMine) {
-                            if(state.isAI) handleGameSync({act:'accept', g:m.gameCode, p1:m.author, p2:state.username, id:m.msgId});
-                            else state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'accept', g:m.gameCode, p1:m.author, p2:state.username, id:m.msgId}}); 
+                            const gCode = m.gameCode;
+                            const p1Name = m.author;
+                            const p2Name = state.username;
+                            const msgId = m.msgId;
+
+                            if(state.isAI) {
+                                handleGameSync({act:'accept', g:gCode, p1:p1Name, p2:p2Name, id:msgId});
+                            } else {
+                                // إرسال للبث للطرف الثاني لفتح اللعبة لديه أيضاً
+                                state.channel.send({type:'broadcast', event:'game_sync', payload:{act:'accept', g:gCode, p1:p1Name, p2:p2Name, id:msgId}});
+                                // فتح اللعبة محلياً عند الشخص الذي ضغط قبول فوراً
+                                triggerStartGame(gCode, p1Name, p2Name, msgId);
+                            }
                         }
                     };
                 } else {
@@ -839,7 +863,7 @@
             }
 
             // ==========================================
-            // 4. ARCADE DISPATCHER
+            // 4. ARCADE DISPATCHER & GAME SYNC FIX
             // ==========================================
             document.getElementById('btn-arcade').onclick = ()=>{ UI.arcPnl.classList.add('open'); };
             document.getElementById('btn-close-arcade').onclick = ()=>{ UI.arcPnl.classList.remove('open'); };
@@ -861,17 +885,26 @@
 
             function handleAIResponse(p) { setTimeout(()=> handleGameSync(p.payload), 100); }
 
+            // 🔴 دالة متزامنة لبدء اللعبة عند الطرفين 🔴
+            function triggerStartGame(code, p1, p2, id) {
+                const mySymXO = (p1 === state.username) ? 'X' : 'O';
+                const mySymC4 = (p1 === state.username) ? 'R' : 'Y';
+                const mySymChess = (p1 === state.username) ? 'W' : 'B';
+                const hockRole = (p1 === state.username) ? 'p1' : 'p2';
+
+                if(code === 'XO') startXO(mySymXO, id);
+                else if(code === 'C4') startC4(mySymC4, id);
+                else if(code === 'CHESS') startChess(mySymChess, id);
+                else if(code === 'HOCKEY') startHockey(hockRole, id);
+            }
+
             function handleGameSync(p) {
-                if(p.act==='accept' && p.g==='XO' && (p.p1===state.username || p.p2===state.username)) startXO(p.p1===state.username?'X':'O', p.id);
+                if(p.act==='accept' && (p.p1===state.username || p.p2===state.username)) {
+                    triggerStartGame(p.g, p.p1, p.p2, p.id);
+                }
                 else if(p.act==='xo_m') { updateXO(p.i, p.s); checkXOWin(); }
-                
-                else if(p.act==='accept' && p.g==='HOCKEY' && (p.p1===state.username || p.p2===state.username)) startHockey(p.p1===state.username?'p1':'p2', p.id);
                 else if(p.act==='hock_s' && state.games.hockey.active) syncHockey(p.st);
-                
-                else if(p.act==='accept' && p.g==='C4' && (p.p1===state.username || p.p2===state.username)) startC4(p.p1===state.username?'R':'Y', p.id);
                 else if(p.act==='c4_m') { dropC4(p.c, p.s); checkC4Win(); }
-                
-                else if(p.act==='accept' && p.g==='CHESS' && (p.p1===state.username || p.p2===state.username)) startChess(p.p1===state.username?'W':'B', p.id);
                 else if(p.act==='chess_m') { moveChess(p.f, p.t); }
             }
 
@@ -1505,7 +1538,7 @@
                     st.step++;
                     if(st.step === st.seq.length) {
                         st.clickable = false;
-                        st.pts += 5; // خمس نقاط لكل مرحلة מתجاوزة
+                        st.pts += 5;
                         document.getElementById('simon-score').textContent = st.pts + ' 🌟';
                         setTimeout(() => simonNextRound(), 1000);
                     }
