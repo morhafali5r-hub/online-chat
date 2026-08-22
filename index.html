@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Chatlounge - Ultimate Arcade & AI Mode</title>
     
+    <!-- Supabase CDN -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
     <style>
@@ -23,13 +24,8 @@
             --accent-green: #4a5d23; --accent-red: #8b3a3a; --accent-gold: #c49c5e;
             --bubble-sender: #f4ecd8; --bubble-receiver: #ffffff;
             
+            /* ألوان خمنها */
             --kh-correct: #4a5d23; --kh-present: #b08d57; --kh-absent: #8b7d6b;
-            
-            /* Skyfall variables */
-            --neon-cyan:#5ef1ff; --neon-amber:#ffb648; --neon-red:#ff3b4e;
-            --bg-deep:#05070f; --bg-mid:#0d1426; --glass:rgba(15,22,40,0.55);
-            --glass-border:rgba(120,200,255,0.18); --text-soft:#cfe6ff;
-            --neon-green:#5eff86; --glass-premium:rgba(15, 25, 45, 0.7);
         }
 
         /* =========================================
@@ -39,6 +35,7 @@
         body { font-family: 'Gali', sans-serif; background: linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2)); color: var(--text-dark); height: 100dvh; width: 100vw; overflow: hidden; display: flex; justify-content: center; align-items: center; position: relative; }
         body::before { content: ""; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"); pointer-events: none; z-index: 0; }
 
+        /* Ambient decorative blobs */
         .ambient-blob { position: fixed; border-radius: 50%; filter: blur(70px); opacity: 0.28; pointer-events: none; z-index: 0; }
         .blob-1 { width: 260px; height: 260px; background: var(--accent-gold); top: -90px; right: -70px; }
         .blob-2 { width: 300px; height: 300px; background: var(--accent-green); bottom: -110px; left: -90px; }
@@ -61,7 +58,7 @@
         @keyframes popIn { 0% { opacity:0; transform: translateY(10px) scale(0.95); } 100% { opacity:1; transform: translateY(0) scale(1); } }
 
         /* =========================================
-           3. CHAT UI
+           3. CHAT UI & USERS LIST
            ========================================= */
         #login-screen { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; }
         #login-screen h1 { font-size: 4.5rem; color: var(--accent-green); margin-bottom: 5px; }
@@ -151,7 +148,6 @@
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0, 0.8); display: none; justify-content: center; align-items: center; z-index: 200; backdrop-filter: blur(5px); opacity: 0; transition: opacity 0.2s; padding: 10px;}
         .modal-overlay.active { display: flex; opacity: 1; }
         
-        /* Fixed Game Modal width for responsive boards */
         .game-modal { width: 100%; max-width: 480px; text-align: center; position: relative; max-height: 95vh; overflow-y: auto; scrollbar-width: none; padding: 20px 15px; transform: scale(0.95); transition: transform 0.2s; border-radius: 16px; background: var(--bg-grad-1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: auto;}
         .modal-overlay.active .game-modal { transform: scale(1); }
         
@@ -163,7 +159,7 @@
 
         canvas { display: block; margin: 0 auto; touch-action: none; border-radius: 12px; max-width: 100%; flex-shrink: 0;}
 
-        /* Board Games Fixed (No scrollbars, perfect squares) */
+        /* Responsive Boards */
         .board-container-wrapper { width: 100%; display: flex; justify-content: center; padding: 10px 0;}
         
         #chess-board { display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; max-width: 380px; aspect-ratio: 1; border: 4px solid #5c442c; border-radius: 4px; box-sizing: border-box;}
@@ -234,139 +230,22 @@
         /* HOCKEY */
         #hockeyCanvas { background: #141c24; border: 4px solid #ff3b4e; width: 100%; max-width: 320px; aspect-ratio: 3/4; }
         
-        #file-input { display: none; }
+        /* 🔴 SIMON SAYS 🔴 */
+        .simon-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 320px; aspect-ratio: 1; margin: 20px auto; }
+        .simon-btn { width: 100%; height: 100%; border-radius: 12px; cursor: pointer; opacity: 0.6; transition: transform 0.1s, opacity 0.1s, box-shadow 0.1s; border: 2px solid rgba(255,255,255,0.2); box-sizing: border-box;}
+        .simon-btn:active { transform: scale(0.95); }
+        .simon-btn.lit { opacity: 1; box-shadow: 0 0 20px currentColor; transform: scale(1.05); z-index: 2;}
+        .sb-0 { background: #ff3b4e; color: #ff3b4e; }
+        .sb-1 { background: #3fa34d; color: #3fa34d; }
+        .sb-2 { background: #00bcd4; color: #00bcd4; }
+        .sb-3 { background: #ffd700; color: #ffd700; }
+        .sb-4 { background: #af52de; color: #af52de; }
+        .sb-5 { background: #ff9500; color: #ff9500; }
+        .sb-6 { background: #5ac8fa; color: #5ac8fa; }
+        .sb-7 { background: #ff2d55; color: #ff2d55; }
+        .sb-8 { background: #b08d57; color: #b08d57; }
 
-        /* =========================================
-           6. FLAPPY BIRD (SKYFALL) CSS
-           ========================================= */
-        .flappy-container-modal { padding: 0 !important; background: transparent !important; box-shadow: none !important; max-width: 520px; height: 95vh; border: none; overflow: hidden; }
-        #gameContainer{ position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:var(--bg-deep); border-radius: 16px; overflow: hidden;}
-        #gameWrap{ position:relative; width:100%; height:100%; max-width:520px; margin:0 auto; overflow:hidden; box-shadow:0 0 120px rgba(94,241,255,0.08); background:linear-gradient(180deg,#0a1224 0%, #060912 60%, #03040a 100%); font-family:'Courier New',monospace; touch-action:none; -webkit-user-select:none; user-select:none; }
-        #gameWrap canvas{ display:block; width:100%; height:100%; position:absolute; top:0; left:0; border-radius: 0;}
-        #heidiTitle { position: absolute; top: 15%; left: 50%; transform: translateX(-50%); font-size: clamp(28px, 8vw, 42px); font-weight: 900; color: #ffb6c1; text-shadow: 0 0 15px #ff69b4, 0 0 30px #ff1493; letter-spacing: 6px; z-index: 24; pointer-events: none; opacity: 0.8; animation: floatHeidi 3s ease-in-out infinite; white-space: nowrap; }
-        #shashoTitle { position: absolute; top: 12%; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; text-align: center; font-size: clamp(16px, 5vw, 24px); font-weight: 900; color: #ffd700; text-shadow: 0 0 8px #ffb648, 0 0 16px #ffd700; letter-spacing: 3px; line-height: 1.4; z-index: 24; pointer-events: none; opacity: 0.9; animation: floatHeidi 3s ease-in-out infinite; }
-        @keyframes floatHeidi { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -8px); } }
-        #vignette{ position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,0.65) 100%); z-index:20; }
-        #scanlines{ position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(to bottom, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 3px); mix-blend-mode:overlay; opacity:0.5; z-index:21; }
-        #chromaticOverlay{ position:absolute; inset:0; pointer-events:none; z-index:22; opacity:0; mix-blend-mode:screen; background:linear-gradient(90deg, rgba(255,0,60,0.25) 0%, transparent 2%), linear-gradient(270deg, rgba(0,255,255,0.25) 0%, transparent 2%); transition:opacity 0.1s linear; }
-        #flashOverlay{ position:absolute; inset:0; pointer-events:none; z-index:50; background:#fff; opacity:0; transition: opacity 0.1s; }
-        #crackOverlay{ position:absolute; inset:0; pointer-events:none; z-index:49; opacity:0; background:radial-gradient(circle at 50% 50%, transparent 30%, rgba(0,0,0,0.0) 31%), repeating-conic-gradient(from 0deg, rgba(255,255,255,0.0) 0deg 10deg, rgba(255,255,255,0.07) 10deg 11deg); }
-        .ui-layer{ position:absolute; inset:0; z-index:30; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-soft); text-align:center; padding:24px; }
-        #loadingScreen{ background:radial-gradient(ellipse at 50% 40%, #122142 0%, #050811 70%); z-index:100; }
-        .logo-title{ font-size:clamp(28px,9vw,52px); font-weight:900; letter-spacing:6px; color:#fff; text-shadow:0 0 10px var(--neon-cyan), 0 0 30px rgba(94,241,255,0.6), 0 0 60px rgba(94,241,255,0.3); animation:pulseGlow 2.4s ease-in-out infinite; margin-bottom:6px; font-family:'Courier New',monospace;}
-        .logo-sub{ font-size:clamp(10px,3vw,14px); letter-spacing:4px; color:var(--neon-amber); opacity:0.85; margin-bottom:40px; text-shadow:0 0 10px rgba(255,182,72,0.6); font-family:'Courier New',monospace;}
-        @keyframes pulseGlow{ 0%,100%{text-shadow:0 0 10px var(--neon-cyan),0 0 30px rgba(94,241,255,0.6),0 0 60px rgba(94,241,255,0.3);} 50%{text-shadow:0 0 18px var(--neon-cyan),0 0 50px rgba(94,241,255,0.9),0 0 90px rgba(94,241,255,0.5);} }
-        .loading-bar-frame{ width:min(70vw,300px); height:10px; border-radius:6px; border:1px solid var(--glass-border); background:rgba(255,255,255,0.04); overflow:hidden; box-shadow:0 0 20px rgba(94,241,255,0.15) inset; }
-        .loading-bar-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--neon-cyan), var(--neon-amber)); box-shadow:0 0 12px var(--neon-cyan); transition:width 0.18s ease-out; }
-        .loading-pct{ margin-top:14px; font-size:12px; letter-spacing:3px; color:var(--text-soft); opacity:0.7; font-family:'Courier New',monospace;}
-        .skyfall-panel{ background:var(--glass); border:1px solid var(--glass-border); border-radius:18px; backdrop-filter:blur(10px); box-shadow:0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.02) inset; padding:28px 32px; display:flex; flex-direction:column; align-items:center; gap:14px; max-width:90%; }
-        .sky-title-glow{ font-size:clamp(30px,10vw,56px); font-weight:900; letter-spacing:8px; color:#fff; text-shadow:0 0 12px var(--neon-cyan), 0 0 40px rgba(94,241,255,0.5); animation:floatTitle 3s ease-in-out infinite; font-family:'Courier New',monospace;}
-        @keyframes floatTitle{ 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-8px);} }
-        .prompt-text{ font-size:clamp(11px,3.4vw,15px); letter-spacing:3px; color:var(--neon-amber); opacity:0.9; animation:blinkPrompt 1.6s steps(2) infinite; text-shadow:0 0 10px rgba(255,182,72,0.5); font-family:'Courier New',monospace;}
-        @keyframes blinkPrompt{ 50%{opacity:0.25;} }
-        .sky-score-display{ font-size:clamp(12px,3.6vw,16px); letter-spacing:2px; color:var(--text-soft); opacity:0.85; font-family:'Courier New',monospace;}
-        .sky-score-display b{ color:var(--neon-cyan); text-shadow:0 0 8px rgba(94,241,255,0.6); }
-        .sky-glow-btn{ font-family:'Courier New',monospace; font-size:clamp(12px,3.6vw,15px); letter-spacing:3px; font-weight:700; color:#fff; background:linear-gradient(135deg, rgba(94,241,255,0.18), rgba(255,182,72,0.12)); border:1px solid var(--glass-border); border-radius:12px; padding:13px 30px; cursor:pointer; backdrop-filter:blur(6px); box-shadow:0 0 18px rgba(94,241,255,0.18), 0 4px 14px rgba(0,0,0,0.4); transition:transform 0.12s ease, box-shadow 0.2s ease, background 0.2s ease; -webkit-tap-highlight-color:transparent; }
-        .sky-glow-btn:active{ transform:scale(0.95); box-shadow:0 0 30px rgba(94,241,255,0.4), 0 2px 8px rgba(0,0,0,0.5); }
-        .sky-glow-btn.danger{ background:linear-gradient(135deg, rgba(255,59,78,0.2), rgba(255,182,72,0.1)); box-shadow:0 0 18px rgba(255,59,78,0.25), 0 4px 14px rgba(0,0,0,0.4); }
-        #sky-hud{ position:absolute; top:0; left:0; right:0; z-index:25; display:flex; justify-content:space-between; align-items:flex-start; padding:14px 14px 0 14px; pointer-events:none; }
-        #sky-hud > *{ pointer-events:auto; }
-        .hud-score{ font-size:clamp(28px,9vw,46px); font-weight:900; color:#fff; text-shadow:0 0 10px var(--neon-cyan), 0 0 26px rgba(94,241,255,0.5); letter-spacing:4px; margin-top:6px; user-select:none; font-family:'Courier New',monospace;}
-        .hud-best{ font-size:11px; letter-spacing:2px; color:var(--neon-amber); opacity:0.8; text-align:center; margin-top:4px; font-family:'Courier New',monospace;}
-        .hud-score-wrap{ flex:1; display:flex; flex-direction:column; align-items:center; position:absolute; left:0; right:0; top:14px; }
-        .hud-buttons{ display:flex; gap:8px; margin-left:auto; }
-        .sky-icon-btn{ width:38px; height:38px; border-radius:10px; border:1px solid var(--glass-border); background:var(--glass); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:17px; color:var(--text-soft); box-shadow:0 0 12px rgba(94,241,255,0.1); transition:transform .12s ease; }
-        .sky-icon-btn:active{ transform:scale(0.9); }
-        .sky-score-popup{ position:absolute; font-size:22px; font-weight:900; color:var(--neon-cyan); text-shadow:0 0 10px var(--neon-cyan); pointer-events:none; z-index:26; animation:popupFloat 0.7s ease-out forwards; font-family:'Courier New',monospace;}
-        @keyframes popupFloat{ 0%{opacity:1; transform:translate(-50%,-50%) scale(1);} 100%{opacity:0; transform:translate(-50%,-150%) scale(1.4);} }
-        #pauseScreen{ background:rgba(3,5,12,0.55); backdrop-filter:blur(6px); }
-        #gameOverScreen .skyfall-panel{ border-color:rgba(255,59,78,0.3); }
-        .final-score{ font-size:clamp(40px,14vw,72px); font-weight:900; color:#fff; text-shadow:0 0 16px var(--neon-red), 0 0 50px rgba(255,59,78,0.5); margin:4px 0; font-family:'Courier New',monospace;}
-        .muted-icon::after{ content:"🔇"; } .unmuted-icon::after{ content:"🔊"; }
-        #secretFinalScreen .skyfall-panel{ border-color:rgba(255,40,40,0.35); background:rgba(20,4,8,0.65); }
-        #secretFinalScreen .sky-title-glow{ color:#ff5050; text-shadow:0 0 16px #ff2424, 0 0 50px rgba(255,30,30,0.6); letter-spacing:5px; animation:flickerTitle 0.12s steps(2) infinite; }
-        @keyframes flickerTitle{ 0%,100%{opacity:1;} 45%{opacity:0.7;} 50%{opacity:1;} 55%{opacity:0.6;} }
-        .shake-skyfall{ animation:shakeAnim 0.4s ease-in-out; }
-        @keyframes shakeAnim{ 0%,100%{transform:translate(0,0);} 20%{transform:translate(-4px,2px);} 40%{transform:translate(4px,-3px);} 60%{transform:translate(-3px,3px);} 80%{transform:translate(3px,-2px);} }
-        #currencyHud{ position:absolute; top:14px; left:14px; z-index:27; display:flex; align-items:center; gap:6px; pointer-events:none; opacity:0; transition:opacity 0.4s; }
-        #currencyHud.visible{ opacity:1; }
-        .currency-icon{ font-size:16px; filter:drop-shadow(0 0 6px #ffb648); }
-        .currency-val{ font-size:14px; font-weight:700; letter-spacing:2px; color:var(--neon-amber); text-shadow:0 0 8px rgba(255,182,72,0.8); font-family:'Courier New',monospace;}
-        .currency-popup{ position:absolute; font-size:18px; font-weight:900; color:var(--neon-amber); text-shadow:0 0 10px var(--neon-amber); pointer-events:none; z-index:28; animation:popupFloat 0.9s ease-out forwards; font-family:'Courier New',monospace;}
-        #livesHud{ position:absolute; bottom:14px; left:14px; z-index:27; display:flex; gap:5px; pointer-events:none; opacity:0; transition:opacity 0.4s; }
-        #livesHud.visible{ opacity:1; }
-        .heart-icon{ font-size:20px; filter:drop-shadow(0 0 6px #ff3b4e); transition:transform 0.2s ease; }
-        .heart-icon.pulse{ animation:heartPulse 0.4s ease; }
-        @keyframes heartPulse{ 0%{transform:scale(1);} 50%{transform:scale(1.5);} 100%{transform:scale(1);} }
-        .life-popup{ position:absolute; font-size:16px; font-weight:900; color:#ff6b7a; text-shadow:0 0 10px #ff3b4e; pointer-events:none; z-index:28; animation:popupFloat 1s ease-out forwards; font-family:'Courier New',monospace;}
-        @keyframes invincFlicker{ 0%,100%{opacity:1;} 50%{opacity:0.2;} }
-        #damageFlash{ position:absolute; inset:0; pointer-events:none; z-index:48; background:rgba(255,30,30,0.35); opacity:0; }
-        #shopOverlay{ position:absolute; inset:0; z-index:60; background:rgba(3,5,14,0.92); backdrop-filter:blur(16px); display:flex; flex-direction:column; align-items:center; padding:24px 16px 40px; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
-        #shopOverlay.visible { opacity: 1; visibility: visible; }
-        .shop-title{ font-size:clamp(24px,8vw,42px); font-weight:900; letter-spacing:10px; color:#fff; text-shadow:0 0 14px var(--neon-cyan), 0 0 40px rgba(94,241,255,0.4); margin-bottom:8px; margin-top:12px; font-family:'Courier New',monospace;}
-        .shop-currency-bar{ display:flex; align-items:center; gap:8px; padding:10px 24px; background:rgba(255,182,72,0.08); border:1px solid rgba(255,182,72,0.25); border-radius:30px; margin-bottom:20px; font-size:18px; font-weight:700; color:var(--neon-amber); text-shadow:0 0 8px rgba(255,182,72,0.6); box-shadow: 0 0 20px rgba(255,182,72,0.1) inset; font-family:'Courier New',monospace;}
-        .shop-tabs { display: flex; gap: 8px; width: 100%; max-width: 480px; margin-bottom: 20px; background: rgba(0,0,0,0.3); border-radius: 14px; padding: 6px; border: 1px solid var(--glass-border); }
-        .shop-tab-btn { flex: 1; font-family: 'Courier New', monospace; font-size: 13px; font-weight: 700; letter-spacing: 3px; color: var(--text-soft); background: transparent; border: none; padding: 12px 0; border-radius: 10px; cursor: pointer; transition: all 0.2s ease; }
-        .shop-tab-btn.active { background: var(--glass-premium); color: #fff; box-shadow: 0 0 15px rgba(94,241,255,0.2); border: 1px solid rgba(94,241,255,0.4); text-shadow: 0 0 8px var(--neon-cyan); }
-        .shop-content-area { width: 100%; max-width: 480px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; gap: 16px; padding-bottom: 20px; opacity: 1; transition: opacity 0.2s; }
-        .shop-content-area.fade { opacity: 0; }
-        .shop-content-area::-webkit-scrollbar { width: 6px; } .shop-content-area::-webkit-scrollbar-track { background: transparent; } .shop-content-area::-webkit-scrollbar-thumb { background: rgba(94,241,255,0.2); border-radius: 10px; }
-        .skyfall-shop-card{ background:var(--glass-premium); border:1px solid var(--glass-border); border-radius:16px; padding:16px; display:flex; flex-direction:row; align-items:center; gap:16px; position:relative; overflow:hidden; width: 100%; transition:transform 0.2s, border-color 0.3s, box-shadow 0.3s; font-family:'Courier New',monospace; text-align:left; direction:ltr;}
-        .skyfall-shop-card:hover { transform: translateY(-3px); }
-        .skyfall-shop-card::before{ content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(94,241,255,0.04),rgba(120,80,255,0.04)); pointer-events:none; }
-        .skyfall-shop-card.equipped{ border-color:rgba(94,241,255,0.6); box-shadow:0 0 25px rgba(94,241,255,0.2), inset 0 0 15px rgba(94,241,255,0.05); background:rgba(15, 30, 55, 0.85); }
-        .skyfall-shop-card.secret{ border-color:rgba(255,59,78,0.5); background:rgba(30, 10, 15, 0.85); box-shadow:0 0 25px rgba(255,59,78,0.2); }
-        .skyfall-shop-card.heidi{ border-color:rgba(255,105,180,0.6); background:rgba(40, 10, 30, 0.85); box-shadow:0 0 25px rgba(255,105,180,0.2); }
-        .skyfall-shop-card.heidi.equipped{ background:rgba(60, 15, 45, 0.9); box-shadow:0 0 30px rgba(255,105,180,0.4), inset 0 0 15px rgba(255,105,180,0.1); }
-        .skyfall-shop-card.shasho{ border-color:rgba(255,215,0,0.6); background:rgba(40, 35, 10, 0.85); box-shadow:0 0 25px rgba(255,215,0,0.2); }
-        .skyfall-shop-card.shasho.equipped{ background:rgba(50, 45, 15, 0.9); box-shadow:0 0 30px rgba(255,215,0,0.4), inset 0 0 15px rgba(255,215,0,0.1); }
-        .card-img-wrap { width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); flex-shrink: 0;}
-        .card-img{ width:90%; height:90%; object-fit:contain; filter:drop-shadow(0 0 8px rgba(94,241,255,0.4)); }
-        .card-img.locked-img { filter:grayscale(1) brightness(0.3); }
-        .card-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-        .card-title { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 2px; }
-        .card-desc { font-size: 11px; color: var(--text-soft); opacity: 0.7; letter-spacing: 1px; }
-        .card-price { font-size: 14px; font-weight: 700; color: var(--neon-amber); text-shadow: 0 0 8px rgba(255,182,72,0.5); margin-top: 4px; }
-        .card-price.free { color: var(--neon-cyan); text-shadow: 0 0 8px rgba(94,241,255,0.5); }
-        .card-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; justify-content: center; }
-        .sky-shop-btn{ font-family:'Courier New',monospace; font-size:12px; letter-spacing:2px; font-weight:700; color:#fff; padding:10px 18px; border-radius:10px; cursor:pointer; border:1px solid var(--glass-border); transition:transform 0.12s, box-shadow 0.2s, background 0.2s; text-align:center; min-width: 100px; }
-        .sky-shop-btn:active{ transform:scale(0.94); }
-        .sky-shop-btn.buy-btn{ background:linear-gradient(135deg,rgba(255,182,72,0.2),rgba(255,100,40,0.12)); box-shadow:0 0 14px rgba(255,182,72,0.15); border-color: rgba(255,182,72,0.4); }
-        .sky-shop-btn.buy-btn:hover{ box-shadow:0 0 25px rgba(255,182,72,0.35); background:linear-gradient(135deg,rgba(255,182,72,0.3),rgba(255,100,40,0.2)); }
-        .sky-shop-btn.equip-btn{ background:linear-gradient(135deg,rgba(94,241,255,0.18),rgba(120,80,255,0.1)); box-shadow:0 0 14px rgba(94,241,255,0.15); border-color: rgba(94,241,255,0.4); }
-        .sky-shop-btn.equip-btn:hover{ box-shadow:0 0 25px rgba(94,241,255,0.35); background:linear-gradient(135deg,rgba(94,241,255,0.3),rgba(120,80,255,0.2)); }
-        .sky-shop-btn.equipped-btn { background: rgba(94,241,255,0.1); border-color: rgba(94,241,255,0.6); color: var(--neon-cyan); cursor: default; }
-        .sky-shop-btn.heidi-equip-btn { background: rgba(255,105,180,0.15); border-color: rgba(255,105,180,0.6); color: #ffb6c1; cursor: pointer; text-shadow: 0 0 8px #ff69b4; }
-        .sky-shop-btn.heidi-equipped-btn { background: rgba(255,105,180,0.2); border-color: rgba(255,105,180,0.8); color: #fff; cursor: default; text-shadow: 0 0 10px #ff69b4; box-shadow: 0 0 15px rgba(255,105,180,0.3); }
-        .sky-shop-btn.shasho-equip-btn { background: rgba(255,215,0,0.15); border-color: rgba(255,215,0,0.6); color: #ffd700; cursor: pointer; text-shadow: 0 0 8px #ffb648; }
-        .sky-shop-btn.shasho-equipped-btn { background: rgba(255,215,0,0.2); border-color: rgba(255,215,0,0.8); color: #fff; cursor: default; text-shadow: 0 0 10px #ffd700; box-shadow: 0 0 15px rgba(255,215,0,0.3); }
-        .sky-shop-btn.disabled-btn{ opacity:0.35; cursor:not-allowed; background:rgba(255,255,255,0.04); }
-        .sky-shop-btn.secret-btn { background:linear-gradient(135deg,rgba(255,59,78,0.2),rgba(200,20,40,0.12)); box-shadow:0 0 14px rgba(255,59,78,0.2); border-color: rgba(255,59,78,0.5); color: #ff7a7a; text-shadow: 0 0 8px rgba(255,59,78,0.6); }
-        .theme-warning { width: 100%; padding: 16px; background: rgba(255,182,72,0.1); border: 1px solid rgba(255,182,72,0.3); border-radius: 12px; color: var(--neon-amber); font-size: 12px; text-align: center; letter-spacing: 2px; margin-bottom: 10px; font-family:'Courier New',monospace;}
-        .upgrade-active-badge { margin-top: 8px; font-size: 11px; color: var(--neon-green); background: rgba(94,255,134,0.1); border: 1px solid rgba(94,255,134,0.3); padding: 4px 8px; border-radius: 6px; letter-spacing: 1px; }
-        .shop-bottom-actions { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; max-width: 480px; padding-top: 20px; }
-        .programmer-credit{ font-family: 'Courier New', monospace; font-size: 10px; font-weight: 700; letter-spacing: 5px; color: rgba(180, 220, 255, 0.4); text-shadow: 0 0 12px rgba(94, 241, 255, 0.3); margin-top: 10px; animation: creditGlow 3s ease-in-out infinite; }
-        @keyframes creditGlow { 0%, 100% { opacity: 0.6; text-shadow: 0 0 10px rgba(94,241,255,0.2); } 50% { opacity: 1; text-shadow: 0 0 20px rgba(94,241,255,0.6), 0 0 30px rgba(94,241,255,0.2); } }
-        .heidi-quote { font-family: 'Courier New', monospace; font-size: 9px; letter-spacing: 3px; color: #ffb6c1; text-shadow: 0 0 8px #ff69b4; margin-top: 6px; animation: pulseHeidiText 2s infinite; }
-        @keyframes pulseHeidiText { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; text-shadow: 0 0 12px #ff1493; } }
-        .delete-data-btn { position: absolute; bottom: 15px; right: 15px; font-family: 'Courier New', monospace; font-size: 9px; letter-spacing: 2px; color: rgba(255, 59, 78, 0.6); background: rgba(255, 59, 78, 0.05); border: 1px solid rgba(255, 59, 78, 0.3); padding: 6px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s; z-index: 90; }
-        .delete-data-btn:hover { background: rgba(255, 59, 78, 0.2); color: rgba(255, 59, 78, 1); }
-        #cheatModal{ position:absolute; inset:0; z-index:80; background:rgba(2,4,12,0.9); backdrop-filter:blur(14px); display:flex; align-items:center; justify-content:center; padding:24px; }
-        .cheat-panel{ background:rgba(8,12,28,0.9); border:1px solid rgba(94,241,255,0.3); border-radius:20px; padding:32px 28px; display:flex; flex-direction:column; align-items:center; gap:16px; max-width:340px; width:100%; position:relative; box-shadow:0 0 60px rgba(94,241,255,0.08); font-family:'Courier New',monospace;}
-        .cheat-title{ font-size:clamp(16px,5vw,22px); font-weight:900; letter-spacing:5px; color:var(--neon-cyan); text-shadow:0 0 12px var(--neon-cyan); text-align:center; }
-        .cheat-input{ width:100%; font-family:'Courier New',monospace; font-size:14px; letter-spacing:3px; color:#fff; background:rgba(94,241,255,0.06); border:1px solid rgba(94,241,255,0.25); border-radius:10px; padding:12px 16px; outline:none; text-align:center; transition:border-color 0.2s, box-shadow 0.2s; }
-        .cheat-input:focus{ border-color:rgba(94,241,255,0.6); box-shadow:0 0 18px rgba(94,241,255,0.15); }
-        .cheat-input.error{ border-color:rgba(255,59,78,0.8); box-shadow:0 0 18px rgba(255,59,78,0.25); animation:glitchShake 0.3s ease; }
-        .cheat-input.success{ border-color:rgba(94,241,255,0.9); box-shadow:0 0 24px rgba(94,241,255,0.4); }
-        .cheat-input.success-pink{ border-color:#ff69b4; box-shadow:0 0 24px rgba(255,105,180,0.6); }
-        .cheat-input.success-gold{ border-color:#ffd700; box-shadow:0 0 24px rgba(255,215,0,0.6); }
-        @keyframes glitchShake{ 0%,100%{transform:translateX(0);} 20%{transform:translateX(-8px);} 40%{transform:translateX(8px);} 60%{transform:translateX(-5px);} 80%{transform:translateX(5px);} }
-        .cheat-msg{ font-size:12px; letter-spacing:2px; text-align:center; min-height:18px; transition:color 0.2s; font-family:'Courier New',monospace;}
-        .cheat-msg.ok{color:var(--neon-cyan); text-shadow:0 0 8px var(--neon-cyan);} .cheat-msg.ok-pink{color:#ffb6c1; text-shadow:0 0 10px #ff69b4;} .cheat-msg.ok-gold{color:#ffd700; text-shadow:0 0 10px #ffb648;} .cheat-msg.err{color:var(--neon-red); text-shadow:0 0 8px var(--neon-red);}
-        .cheat-particles{ position:absolute; inset:0; pointer-events:none; overflow:hidden; border-radius:20px; }
-        .cheat-trigger-btn{ font-family:'Courier New',monospace; font-size:9px; letter-spacing:3px; color:rgba(94,241,255,0.45); background:rgba(94,241,255,0.04); border:1px solid rgba(94,241,255,0.12); border-radius:8px; padding:5px 12px; cursor:pointer; transition:color 0.2s, box-shadow 0.2s, border-color 0.2s; -webkit-tap-highlight-color:transparent; }
-        .cheat-trigger-btn:hover{ color:rgba(94,241,255,0.9); border-color:rgba(94,241,255,0.35); box-shadow:0 0 14px rgba(94,241,255,0.15); }
-        #shopToast { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:rgba(255,59,78,0.15); border:1px solid rgba(255,59,78,0.4); border-radius:10px; padding:10px 24px; color:#ff7a7a; font-size:12px; letter-spacing:2px; z-index:90; box-shadow: 0 0 20px rgba(255,59,78,0.2); backdrop-filter: blur(5px); transition: opacity 0.3s; font-family:'Courier New',monospace;}
+        #file-input { display: none; }
     </style>
 </head>
 <body>
@@ -446,14 +325,14 @@
             <div class="game-card" onclick="launchGame('KHAMENHA')">
                 <div style="text-align:right;"><h3 style="color:#b08d57;">خمنها برو</h3><div class="hint">النسخة الشاملة</div></div><div class="gc-icon">📜</div>
             </div>
-            <div class="game-card" onclick="launchGame('FLAPPY')">
-                <div style="text-align:right;"><h3 style="color:#008080;">Skyfall</h3><div class="hint">طيران سينمائي</div></div><div class="gc-icon">🚀</div>
+            <div class="game-card" onclick="launchGame('SIMON')">
+                <div style="text-align:right;"><h3 style="color:#00bcd4;">الذاكرة الصوتية</h3><div class="hint">كرر النغمة (9 ألوان)</div></div><div class="gc-icon">🎵</div>
             </div>
             <div class="game-card" onclick="launchGame('TIME')">
                 <div style="text-align:right;"><h3 style="color:#2c3e50;">سيد الوقت</h3><div class="hint">أوقف العداد بدقة</div></div><div class="gc-icon">⏱️</div>
             </div>
             <div class="game-card" onclick="launchGame('MEMORY')">
-                <div style="text-align:right;"><h3 style="color:#8b3a3a;">الذاكرة</h3><div class="hint">تطابق الأزواج</div></div><div class="gc-icon">🧠</div>
+                <div style="text-align:right;"><h3 style="color:#8b3a3a;">تطابق الصور</h3><div class="hint">سرعة الذاكرة</div></div><div class="gc-icon">🧠</div>
             </div>
         </div>
 
@@ -549,119 +428,28 @@
             </div>
         </div>
 
-        <!-- Flappy Modal (Skyfall UI) -->
-        <div class="modal-overlay" id="flappy-modal">
-            <div class="game-modal flappy-container-modal" id="flappy-game-modal">
-                <button class="btn-close-game" onclick="forceCloseGame()" style="position:absolute; top:15px; left:15px; z-index:9999; background:rgba(0,0,0,0.5); color:#fff; border:1px solid #fff; box-shadow:none;">🔙 رجوع</button>
-                <div id="gameContainer">
-                  <div id="gameWrap">
-                    <canvas id="gameCanvas"></canvas>
-                    <div id="heidiTitle" class="hidden">FLAPPY HEIDI</div>
-                    <div id="shashoTitle" class="hidden">Happy Birthday Shasho 🤍</div>
-
-                    <div id="sky-hud" class="hidden">
-                      <div class="hud-score-wrap">
-                        <div class="hud-score" id="scoreText">0</div>
-                        <div class="hud-best" id="bestTextHud">BEST 0</div>
-                      </div>
-                      <div class="hud-buttons">
-                        <div class="sky-icon-btn" id="pauseBtn">⏸</div>
-                        <div class="sky-icon-btn" id="muteBtn"><span class="unmuted-icon"></span></div>
-                      </div>
-                    </div>
-
-                    <div id="currencyHud"><span class="currency-icon">💰</span><span class="currency-val" id="currencyVal">0</span></div>
-                    <div id="livesHud"></div>
-                    <div id="damageFlash"></div>
-                    <div id="popupLayer" style="position:absolute;inset:0;z-index:26;pointer-events:none;"></div>
-
-                    <div id="loadingScreen" class="ui-layer">
-                      <div class="logo-title">SKYFALL</div>
-                      <div class="logo-sub">CINEMATIC ARCADE</div>
-                      <div class="loading-bar-frame"><div class="loading-bar-fill" id="loadingFill"></div></div>
-                      <div class="loading-pct" id="loadingPct">LOADING 0%</div>
-                    </div>
-
-                    <div id="startScreen" class="ui-layer hidden">
-                      <button id="deleteDataBtn" class="delete-data-btn">DELETE DATA</button>
-                      <div class="skyfall-panel">
-                        <div class="sky-title-glow">SKYFALL</div>
-                        <div class="sky-score-display">BEST &nbsp;<b id="bestTextStart">0</b></div>
-                        <div class="prompt-text" id="startPrompt">PRESS SPACE OR TAP TO START</div>
-                        <button class="shop-open-btn" id="shopBtnStart">🛒 STORE</button>
-                        <button class="cheat-trigger-btn" id="cheatBtnStart">CHEATCODE</button>
-                        <div class="programmer-credit">Programmed by Morhaf</div>
-                        <div id="heidiQuoteStart" class="heidi-quote hidden">1 heidi = all people ...</div>
-                      </div>
-                    </div>
-
-                    <div id="pauseScreen" class="ui-layer hidden">
-                      <div class="skyfall-panel">
-                        <div class="sky-title-glow" style="font-size:clamp(24px,7vw,38px);letter-spacing:6px;">PAUSED</div>
-                        <button class="sky-glow-btn" id="resumeBtn">RESUME</button>
-                        <button class="sky-glow-btn" id="restartFromPauseBtn">RESTART</button>
-                        <button class="sky-glow-btn danger" id="menuFromPauseBtn">QUIT TO MENU</button>
-                      </div>
-                    </div>
-
-                    <div id="gameOverScreen" class="ui-layer hidden">
-                      <div class="skyfall-panel">
-                        <div class="sky-title-glow" style="font-size:clamp(22px,7vw,36px);letter-spacing:6px;color:#ff7a7a;text-shadow:0 0 14px #ff3b4e,0 0 40px rgba(255,59,78,0.5);">GAME OVER</div>
-                        <div class="final-score" id="finalScoreText">0</div>
-                        <div class="sky-score-display">BEST &nbsp;<b id="bestTextOver">0</b></div>
-                        <button class="sky-glow-btn" id="restartBtn">RESTART</button>
-                        <button class="shop-open-btn" id="shopBtnOver">🛒 STORE</button>
-                        <button class="sky-glow-btn danger" id="menuBtn">MAIN MENU</button>
-                      </div>
-                    </div>
-
-                    <div id="secretFinalScreen" class="ui-layer hidden">
-                      <div class="skyfall-panel">
-                        <div class="sky-title-glow">YOU REACHED 911</div>
-                        <div class="sky-score-display" style="color:#ffb0b0;">THE SKY REMEMBERS</div>
-                        <button class="sky-glow-btn danger" id="secretRestartBtn">RESTART</button>
-                        <button class="sky-glow-btn" id="secretMenuBtn">RETURN TO MENU</button>
-                      </div>
-                    </div>
-
-                    <div id="chromaticOverlay"></div>
-                    <div id="crackOverlay"></div>
-                    <div id="vignette"></div>
-                    <div id="scanlines"></div>
-                    <div id="flashOverlay"></div>
-
-                    <!-- SHOP -->
-                    <div id="shopOverlay">
-                      <div class="shop-title">HANGAR</div>
-                      <div class="shop-currency-bar">💰 <span id="shopCurrencyVal">0</span> CREDITS</div>
-                      <div class="shop-tabs">
-                        <button class="shop-tab-btn active" data-target="themes">THEMES</button>
-                        <button class="shop-tab-btn" data-target="skins">SKINS</button>
-                        <button class="shop-tab-btn" data-target="upgrades">UPGRADES</button>
-                      </div>
-                      <div class="shop-content-area" id="shopContentArea"></div>
-                      <div class="shop-bottom-actions">
-                        <button class="sky-glow-btn" id="shopCloseBtn" style="width:100%; max-width: 480px;">✕ CLOSE STORE</button>
-                        <button class="cheat-trigger-btn" id="cheatBtnShop">CHEATCODE</button>
-                        <div class="programmer-credit">Programmed by Morhaf</div>
-                        <div id="heidiQuoteShop" class="heidi-quote hidden">1 heidi = all people ...</div>
-                      </div>
-                    </div>
-
-                    <!-- CHEAT -->
-                    <div id="cheatModal" class="hidden">
-                      <div class="cheat-panel">
-                        <div class="cheat-particles" id="cheatParticles"></div>
-                        <div class="cheat-title">⚡ CHEAT CODE ⚡</div>
-                        <div style="font-size:11px;letter-spacing:2px;color:var(--text-soft);opacity:0.6;text-align:center;">ENTER SECRET PASSWORD</div>
-                        <input class="cheat-input" id="cheatInput" type="password" placeholder="* * * * * * * * * *" maxlength="30" autocomplete="off">
-                        <div class="cheat-msg" id="cheatMsg"></div>
-                        <button class="sky-glow-btn" id="cheatSubmitBtn" style="width:100%;">EXECUTE</button>
-                        <button class="sky-glow-btn danger" id="cheatCloseBtn" style="width:100%;">CANCEL</button>
-                      </div>
-                    </div>
-                  </div>
+        <!-- SIMON SAYS MODAL -->
+        <div class="modal-overlay" id="simon-modal">
+            <div class="game-modal" style="background: #141c24;">
+                <div class="game-header">
+                    <button class="btn-close-game" style="background:rgba(255,255,255,0.1); color:#fff; border: 1px solid #00bcd4; box-shadow:0 3px 0 #00bcd4;" onclick="forceCloseGame()">🔙 رجوع</button>
+                    <h2 style="color:#fff; font-family:'Thmanyah-Bold';">الذاكرة الصوتية</h2>
+                    <span class="game-score" id="simon-score" style="color:#fff;">0 🌟</span>
                 </div>
+                <div class="board-container-wrapper">
+                    <div class="simon-board" id="simon-board">
+                        <div class="simon-btn sb-0" id="sb-0" onclick="simonClick(0)"></div>
+                        <div class="simon-btn sb-1" id="sb-1" onclick="simonClick(1)"></div>
+                        <div class="simon-btn sb-2" id="sb-2" onclick="simonClick(2)"></div>
+                        <div class="simon-btn sb-3" id="sb-3" onclick="simonClick(3)"></div>
+                        <div class="simon-btn sb-4" id="sb-4" onclick="simonClick(4)"></div>
+                        <div class="simon-btn sb-5" id="sb-5" onclick="simonClick(5)"></div>
+                        <div class="simon-btn sb-6" id="sb-6" onclick="simonClick(6)"></div>
+                        <div class="simon-btn sb-7" id="sb-7" onclick="simonClick(7)"></div>
+                        <div class="simon-btn sb-8" id="sb-8" onclick="simonClick(8)"></div>
+                    </div>
+                </div>
+                <p style="color:rgba(255,255,255,0.7); font-family:'Gali'; font-size:0.9rem; margin-top:10px;">استمع جيداً وكرر الترتيب المضيء بدون أي خطأ!</p>
             </div>
         </div>
 
@@ -689,6 +477,9 @@
     <script>
         window.addEventListener('DOMContentLoaded', () => {
 
+            // 🔴 إضافة مصفوفة لمنع تكرار الرسائل 🔴
+            const renderedMsgs = new Set();
+
             // ==========================================
             // 1. SUPABASE INIT & SFX
             // ==========================================
@@ -708,9 +499,19 @@
                         if(t==='pop') { o.type='sine'; o.frequency.setValueAtTime(600,n); o.frequency.exponentialRampToValueAtTime(900,n+0.1); g.gain.setValueAtTime(0.3,n); g.gain.exponentialRampToValueAtTime(0.01,n+0.1); o.start(n); o.stop(n+0.1); }
                         else if(t==='win') { o.type='square'; o.frequency.setValueAtTime(440,n); o.frequency.setValueAtTime(659,n+0.2); g.gain.setValueAtTime(0.2,n); g.gain.linearRampToValueAtTime(0,n+0.6); o.start(n); o.stop(n+0.6); }
                         else if(t==='lose') { o.type='sawtooth'; o.frequency.setValueAtTime(200,n); o.frequency.exponentialRampToValueAtTime(50,n+0.5); g.gain.setValueAtTime(0.3,n); g.gain.linearRampToValueAtTime(0,n+0.5); o.start(n); o.stop(n+0.5); }
-                        else if(t==='flap'){ o.type='sine'; o.frequency.setValueAtTime(350,n); o.frequency.exponentialRampToValueAtTime(150,n+0.1); g.gain.setValueAtTime(0.2,n); g.gain.exponentialRampToValueAtTime(0.01,n+0.1); o.start(n); o.stop(n+0.1); }
                         else if(t==='hit'){ o.type='square'; o.frequency.setValueAtTime(120,n); o.frequency.exponentialRampToValueAtTime(40,n+0.1); g.gain.setValueAtTime(0.2,n); g.gain.exponentialRampToValueAtTime(0.01,n+0.1); o.start(n); o.stop(n+0.1); }
                         else if(t==='coin'){ o.type='sine'; o.frequency.setValueAtTime(1200,n); o.frequency.setValueAtTime(1800,n+0.1); g.gain.setValueAtTime(0.1,n); g.gain.linearRampToValueAtTime(0,n+0.3); o.start(n); o.stop(n+0.3); }
+                    } catch(e) {}
+                }
+                simon(i) {
+                    if (!this.ctx) return;
+                    try {
+                        const freqs = [261.6, 293.7, 329.6, 349.2, 392.0, 440.0, 493.9, 523.3, 587.3];
+                        const o = this.ctx.createOscillator(); const g = this.ctx.createGain();
+                        o.connect(g); g.connect(this.ctx.destination); const n = this.ctx.currentTime;
+                        o.type = 'sine'; o.frequency.setValueAtTime(freqs[i] || 440, n);
+                        g.gain.setValueAtTime(0.2, n); g.gain.exponentialRampToValueAtTime(0.01, n+0.4);
+                        o.start(n); o.stop(n+0.4);
                     } catch(e) {}
                 }
             }
@@ -729,7 +530,8 @@
                     chess: { active:false, board:[], turn:'W', mySym:null, sel:null, validMoves:[] },
                     kham: { active:false, w:'', h:'', c:'', g:[], row:0, pts:parseInt(localStorage.getItem('chatlounge_k_pts')||'0'), streak:parseInt(localStorage.getItem('chatlounge_k_streak')||'0'), maxA:7, hB:false, rmB:false, locked:[], discovered:[] },
                     time: { active:false, loop:null, pts:parseInt(localStorage.getItem('chatlounge_time_pts')||'0') },
-                    mem: { active:false, cards:[], flipped:[], matches:0, steps:0, startTime:0 }
+                    mem: { active:false, cards:[], flipped:[], matches:0, steps:0, startTime:0 },
+                    simon: { active:false, seq:[], step:0, pts:0, clickable:false }
                 }
             };
 
@@ -791,8 +593,12 @@
                 const hist = JSON.parse(localStorage.getItem(`chat_${state.roomId}`) || '[]');
                 UI.chatBody.innerHTML=''; hist.forEach(m => renderMsg(m, m.author===state.username, true));
             }
+            
+            // 🔴 تعديل: منع الحفظ المكرر في السجل المحلي 🔴
             function saveToLocalHistory(m) {
                 const hist = JSON.parse(localStorage.getItem(`chat_${state.roomId}`) || '[]');
+                const msgKey = m.created_at + m.author + (m.content || m.url || '');
+                if(hist.some(x => (x.created_at + x.author + (x.content || x.url || '')) === msgKey)) return;
                 hist.push(m); localStorage.setItem(`chat_${state.roomId}`, JSON.stringify(hist));
             }
 
@@ -820,6 +626,7 @@
                 } catch(e) {}
             }
 
+            // 🔴 إضافة نظام البث الفوري (Broadcast) للرسائل 🔴
             function setupChannel() {
                 if(state.isAI) return;
                 state.channel = supabase.channel(`rm_${state.roomId}`, {config:{presence:{key:state.username}}});
@@ -827,13 +634,29 @@
                     const p = state.channel.presenceState(); let users = [];
                     for(const k in p) users.push(k); updateOnlineList(users);
                 });
+                
+                // الاستقبال الفوري عبر Broadcast (يعمل حتى لو الداتا بيز معطلة)
+                state.channel.on('broadcast', {event:'chat_msg'}, p => {
+                    if(p.payload.author !== state.username) { 
+                        fx.play('pop'); fx.vibrate(10); 
+                        renderMsg(p.payload, false); 
+                        saveToLocalHistory(p.payload); 
+                    }
+                });
+
+                // الاستقبال من الداتا بيز كاحتياطي
                 state.channel.on('postgres_changes', {event:'INSERT', schema:'public', table:'chatlounge_messages', filter:`room_id=eq.${state.roomId}`}, p=>{
-                    if(p.new.author!==state.username) { fx.play('pop'); fx.vibrate(10); renderMsg(p.new, false); saveToLocalHistory(p.new); }
+                    if(p.new.author!==state.username) { 
+                        fx.play('pop'); fx.vibrate(10); 
+                        renderMsg(p.new, false); 
+                        saveToLocalHistory(p.new); 
+                    }
                 });
                 state.channel.on('broadcast', {event:'game_sync'}, p => handleGameSync(p.payload));
                 state.channel.subscribe(async(st)=>{ if(st==='SUBSCRIBED') await state.channel.track({u:state.username}); });
             }
 
+            // 🔴 تعديل الإرسال لدعم البث الفوري 🔴
             async function sendMsg(m) {
                 m.created_at = new Date().toISOString(); m.color = state.userColor; 
                 renderMsg(m, true); fx.play('pop'); fx.vibrate(10); saveToLocalHistory(m);
@@ -842,12 +665,23 @@
                     if(m.type === 'game_invite') setTimeout(()=>handleGameSync({act:'accept', g:m.gameCode, p1:m.author, p2:'الروبوت AI', id:m.msgId}), 1200);
                     return;
                 }
+                
+                // الإرسال بالهواء مباشرة لتسريع الشات
+                if(state.channel) {
+                    state.channel.send({type:'broadcast', event:'chat_msg', payload: m});
+                }
+
                 let urlStr = m.url || '';
                 if(m.type === 'highscore') urlStr = `${m.score}|${m.gameCode}|${m.color}`;
                 if(m.type === 'game_invite') urlStr = `${m.gameCode}|${m.msgId}|${m.color}`;
                 if(m.type === 'text') urlStr = m.color;
-                await supabase.from('chatlounge_messages').insert([{ room_id: m.room_id, author: m.author, content: m.content, type: m.type, url: urlStr }]);
+                
+                // الحفظ في قاعدة البيانات
+                try {
+                    await supabase.from('chatlounge_messages').insert([{ room_id: m.room_id, author: m.author, content: m.content, type: m.type, url: urlStr }]);
+                } catch(e) {}
             }
+            
             document.getElementById('send-btn').onclick = ()=>{ const t = UI.chatIn.value.trim(); if(t){ sendMsg({room_id:state.roomId, type:'text', content:t, author:state.username}); UI.chatIn.value=''; } };
             UI.chatIn.onkeypress = (e)=>{ if(e.key==='Enter') document.getElementById('send-btn').click(); };
 
@@ -957,7 +791,12 @@
                 e.target.value = '';
             };
 
+            // 🔴 تعديل دالة Render لفلترة الرسائل المكررة 🔴
             function renderMsg(m, isMine, isHist=false) {
+                const msgKey = m.created_at + m.author + (m.content || m.url || '');
+                if(renderedMsgs.has(msgKey)) return;
+                renderedMsgs.add(msgKey);
+
                 const div = document.createElement('div'); const tm = formatTime(m.created_at);
                 if(m.type==='highscore') {
                     const parts = (m.url || `${m.score}|${m.gameCode}|${m.color||'#ffd700'}`).split('|');
@@ -1014,11 +853,7 @@
             window.launchGame = function(code) {
                 UI.arcPnl.classList.remove('open');
                 if(code==='KHAMENHA') initKhamenha();
-                if(code==='FLAPPY') {
-                    openModal('flappy-modal');
-                    if(!window.skyfallInitialized) { window.initSkyfall(); window.skyfallInitialized = true; }
-                    window.dispatchEvent(new Event('resize'));
-                }
+                if(code==='SIMON') initSimon();
                 if(code==='TIME') initTimeGame(); 
                 if(code==='MEMORY') initMemory();
                 if(['XO','HOCKEY','C4','CHESS'].includes(code)) inviteGame(code, code);
@@ -1045,11 +880,10 @@
             window.forceCloseGame = function() {
                 if(state.activeModal) {
                     document.getElementById(state.activeModal).classList.remove('active'); 
-                    if(state.activeModal === 'flappy-modal' && window.haltSkyfall) window.haltSkyfall();
                     state.activeModal=null;
                     if(state.games.hockey.active) { state.games.hockey.active=false; cancelAnimationFrame(state.games.hockey.loop); }
                     if(state.games.time && state.games.time.active) { state.games.time.active=false; state.games.time.running=false; cancelAnimationFrame(state.games.time.loop); }
-                    state.games.xo.active = false; state.games.c4.active = false; state.games.chess.active = false; state.games.kham.active = false; state.games.mem.active = false;
+                    state.games.xo.active = false; state.games.c4.active = false; state.games.chess.active = false; state.games.kham.active = false; state.games.mem.active = false; state.games.simon.active = false;
                 }
             };
 
@@ -1537,7 +1371,7 @@
             }
 
             // ==========================================
-            // GAME 6: TIME GUESSER (سيد الوقت 0.2s)
+            // GAME 6: TIME GUESSER (0.2s margin)
             // ==========================================
             function initTimeGame() {
                 const pts = parseInt(localStorage.getItem('chatlounge_time_pts')||0);
@@ -1572,7 +1406,7 @@
                     const actual = (performance.now() - st.startTs) / 1000; disp.textContent = actual.toFixed(2);
                     const diff = Math.abs(actual - st.target);
                     btn.disabled = true;
-                    if(diff <= 0.2) { /* تم تقليل الهامش إلى 0.2 ثانية */
+                    if(diff <= 0.2) {
                         disp.style.color = "#2ecc71"; fx.play('win'); fx.vibrate([15,50,15]);
                         st.pts += 15; localStorage.setItem('chatlounge_time_pts', st.pts);
                         document.getElementById('time-score').textContent = st.pts + " 🌟";
@@ -1583,7 +1417,7 @@
             };
 
             // ==========================================
-            // GAME 7: MEMORY MATCH (مع حساب الزمن)
+            // GAME 7: MEMORY MATCH (Time Based Score)
             // ==========================================
             function initMemory() {
                 const emj = ['🍎','🍌','🍉','🍇','🍓','🍒','🍍','🥝'];
@@ -1612,7 +1446,7 @@
                         if(st.matches===8) { 
                             st.active=false; fx.play('win'); 
                             let timeSec = Math.floor((Date.now() - st.startTime) / 1000);
-                            let finalScore = Math.max(10, 2000 - (st.steps * 20) - (timeSec * 10)); // نظام النقاط المحدث
+                            let finalScore = Math.max(10, 2000 - (st.steps * 20) - (timeSec * 10));
                             bcastScore('الذاكرة 🧠', 'MEMORY', finalScore); 
                             setTimeout(forceCloseGame, 2000); 
                         } 
@@ -1622,309 +1456,68 @@
             }
 
             // ==========================================
-            // GAME 8: SKYFALL (FLAPPY BIRD SYSTEM INJECTED)
+            // GAME 8: SIMON SAYS (الذاكرة الصوتية - 9 ألوان)
             // ==========================================
-            window.initSkyfall = function() {
-              const canvas = document.getElementById('gameCanvas'); const ctx = canvas.getContext('2d'); const wrap = document.getElementById('gameWrap');
-              let W = 0, H = 0, DPR = 1;
+            window.initSimon = function() {
+                state.games.simon = { active:true, seq:[], step:0, pts:0, clickable:false };
+                document.getElementById('simon-score').textContent = '0 🌟';
+                openModal('simon-modal');
+                setTimeout(() => simonNextRound(), 600);
+            };
 
-              function resize(){
-                DPR = Math.min(window.devicePixelRatio || 1, 2);
-                W = wrap.clientWidth; H = wrap.clientHeight;
-                canvas.width = W * DPR; canvas.height = H * DPR;
-                canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
-                ctx.setTransform(DPR,0,0,DPR,0,0);
-              }
-              window.addEventListener('resize', resize);
-              
-              function S(v){ return v * (H/512); }
-              const GRAVITY = ()=> S(0.34); const FLAP_VELOCITY = ()=> -S(6.6); const MAX_FALL_SPEED = ()=> S(11);
-              const PIPE_GAP_BASE = ()=> S(150); const PIPE_GAP_MIN = ()=> S(112); const PIPE_WIDTH = ()=> S(78);
-              const PIPE_SPEED_BASE= ()=> S(2.6); const PIPE_SPEED_MAX = ()=> S(4.6); const PIPE_SPACING = ()=> S(230);
-              const PLAYER_SIZE = ()=> S(46); const GROUND_HEIGHT = ()=> S(70);
+            function simonNextRound() {
+                const st = state.games.simon; if(!st.active) return;
+                st.seq.push(Math.floor(Math.random() * 9));
+                st.step = 0; st.clickable = false;
+                simonPlaySeq();
+            }
 
-              let totalCurrency = parseInt(localStorage.getItem('skyfall_currency') || '0', 10);
-              let unlockedThemes = JSON.parse(localStorage.getItem('skyfall_themes') || '["theme1"]');
-              let equippedTheme = localStorage.getItem('skyfall_eq_theme') || 'theme1';
-              let unlockedSkins = JSON.parse(localStorage.getItem('skyfall_skins') || '["t2_default"]');
-              let equippedSkin = localStorage.getItem('skyfall_eq_skin') || 't2_default';
-              let extraLifeUses = parseInt(localStorage.getItem('skyfall_extralife') || '0', 10);
-              let heidiUnlocked = (localStorage.getItem('skyfall_heidi_unlocked') === 'true');
-              let shashoUnlocked = (localStorage.getItem('skyfall_shasho_unlocked') === 'true');
-
-              function saveData(){ localStorage.setItem('skyfall_currency', String(totalCurrency)); localStorage.setItem('skyfall_themes', JSON.stringify(unlockedThemes)); localStorage.setItem('skyfall_eq_theme', equippedTheme); localStorage.setItem('skyfall_skins', JSON.stringify(unlockedSkins)); localStorage.setItem('skyfall_eq_skin', equippedSkin); localStorage.setItem('skyfall_extralife', String(extraLifeUses)); localStorage.setItem('skyfall_heidi_unlocked', String(heidiUnlocked)); localStorage.setItem('skyfall_shasho_unlocked', String(shashoUnlocked)); }
-
-              const THEMES = [ { id: 'theme1', name: 'CLASSIC FLAPPY', price: 0, imgUrl: 'https://i.postimg.cc/SNtHvxSF/Flappy-Bird.png', desc: 'Nostalgic arcade feel.' }, { id: 'theme2', name: 'AIRCRAFT', price: 200, imgUrl: 'https://i.postimg.cc/JnFHz9M4/Pngtree-flying-plane-on-transparent-background-17619349.png', desc: 'Military futuristic atmosphere.' } ];
-              const SKINS = [ { id: 't2_default', name: 'DEFAULT', price: 0, imageUrl: 'https://i.postimg.cc/JnFHz9M4/Pngtree-flying-plane-on-transparent-background-17619349.png' }, { id: 't2_skin1', name: 'VIPER JET', price: 100, imageUrl: 'https://i.postimg.cc/SN0g2Yxm/skin2.png' }, { id: 't2_skin2', name: 'B-2 SPIRIT', price: 200, imageUrl: 'https://i.postimg.cc/pX00fBx0/Skin3.png' }, { id: 't2_skin6', name: 'PROJECT 911', price: 911, imageUrl: 'https://i.postimg.cc/d0JX7kn7/skin7.png', secret: true } ];
-              const ASSET_URLS = { pipe1: 'https://i.postimg.cc/mrM5jGpp/Segment-20260614-214947963.png', pipe2: 'https://i.postimg.cc/vm9Nhd2q/Segment-20260614-214951131.png', t1_pipe: 'https://i.postimg.cc/ncGdbwVD/Segment-20260615-153846635.png', heidi: 'https://i.postimg.cc/RCGFCgtF/Picsart-26-06-20-04-03-04-873.png', shasho: 'https://i.postimg.cc/8PBLjv8C/Shashoo.png' };
-
-              const images = {}; const flippedImages = {}; let assetsLoaded = 0; let TOTAL_ASSETS = Object.keys(ASSET_URLS).length + 2;
-
-              function loadImage(key, url){ return new Promise((resolve)=>{ if (images[key]) { resolve(); return; } const img = new Image(); img.crossOrigin = 'anonymous'; img.onload = ()=>{ images[key] = img; try{ const c = document.createElement('canvas'); c.width = img.naturalWidth || img.width; c.height = img.naturalHeight || img.height; const cctx = c.getContext('2d'); cctx.translate(0, c.height); cctx.scale(1,-1); cctx.drawImage(img,0,0,c.width,c.height); flippedImages[key] = c; }catch(e){ flippedImages[key] = img; } assetsLoaded++; updateLoadingProgress(); resolve(); }; img.onerror = ()=>{ const c = document.createElement('canvas'); c.width = 80; c.height = 80; const cctx = c.getContext('2d'); cctx.fillStyle = key.startsWith('pipe') || key.startsWith('t1_pipe') ? '#2bbf6e' : '#ff00ff'; cctx.fillRect(0,0,c.width,c.height); images[key] = c; flippedImages[key] = c; assetsLoaded++; updateLoadingProgress(); resolve(); }; img.src = url; }); }
-              function updateLoadingProgress(){ const pct = Math.min(100, Math.round((assetsLoaded/TOTAL_ASSETS)*100)); document.getElementById('loadingFill').style.width = pct + '%'; document.getElementById('loadingPct').textContent = 'LOADING ' + pct + '%'; }
-
-              let actx = null; let masterGain = null; let muted = (localStorage.getItem('skyfall_muted') === 'true');
-              function initAudio(){ if(actx) return; try{ actx = new (window.AudioContext || window.webkitAudioContext)(); masterGain = actx.createGain(); masterGain.gain.value = muted ? 0 : 0.6; masterGain.connect(actx.destination); }catch(e){ actx = null; } }
-              function setMuted(val){ muted = val; localStorage.setItem('skyfall_muted', muted ? 'true':'false'); if(masterGain) masterGain.gain.value = muted ? 0 : 0.6; document.getElementById('muteBtn').innerHTML = muted ? '<span class="muted-icon"></span>' : '<span class="unmuted-icon"></span>'; }
-
-              const startScreen = document.getElementById('startScreen'), pauseScreen = document.getElementById('pauseScreen'), gameOverScreen = document.getElementById('gameOverScreen'), secretFinalScreen = document.getElementById('secretFinalScreen'), hudElement = document.getElementById('sky-hud'), scoreText = document.getElementById('scoreText'), bestTextHud = document.getElementById('bestTextHud'), bestTextStart = document.getElementById('bestTextStart'), bestTextOver = document.getElementById('bestTextOver'), finalScoreText = document.getElementById('finalScoreText'), chromaticOverlay = document.getElementById('chromaticOverlay'), flashOverlay = document.getElementById('flashOverlay'), crackOverlay = document.getElementById('crackOverlay'), popupLayer = document.getElementById('popupLayer'), heidiTitle = document.getElementById('heidiTitle'), shashoTitle = document.getElementById('shashoTitle');
-              document.getElementById('muteBtn').innerHTML = muted ? '<span class="muted-icon"></span>' : '<span class="unmuted-icon"></span>';
-
-              const STATE = { LOADING:'loading', START:'start', PLAYING:'playing', PAUSED:'paused', CRASHING:'crashing', GAMEOVER:'gameover', SECRET_GLITCH:'secret_glitch', SECRET_EXPLOSION:'secret_explosion', SECRET_FINAL:'secret_final' };
-              let gameState = STATE.LOADING; let bestScore = parseInt(localStorage.getItem('skyfall_best') || '0', 10);
-              bestTextStart.textContent = bestScore; bestTextHud.textContent = 'BEST ' + bestScore; bestTextOver.textContent = bestScore;
-
-              const player = { x: 0, y: 0, vy: 0, rotation: 0, size: 0, idleBob: 0 };
-              function resetPlayer(){ player.size = PLAYER_SIZE(); player.x = W * 0.32; player.y = H * 0.42; player.vy = 0; player.rotation = 0; applyEquippedSkin(); }
-              function applyEquippedSkin(){
-                if(equippedTheme === 'theme1'){ images.player = images['theme1']; heidiTitle.classList.add('hidden'); shashoTitle.classList.add('hidden'); }
-                else if(equippedTheme === 'theme_heidi') { images.player = images['heidi']; heidiTitle.classList.remove('hidden'); shashoTitle.classList.add('hidden'); }
-                else if (equippedTheme === 'theme_shasho') { images.player = images['shasho']; heidiTitle.classList.add('hidden'); shashoTitle.classList.remove('hidden'); }
-                else { images.player = images[equippedSkin] || images['t2_default']; heidiTitle.classList.add('hidden'); shashoTitle.classList.add('hidden'); }
-              }
-
-              let pipes = []; let pipesPassedThisRun = 0;
-              function resetPipes(){ pipes = []; pipesPassedThisRun = 0; const startX = W + S(40); for(let i=0;i<4;i++){ spawnPipe(startX + i*PIPE_SPACING()); } }
-              function spawnPipe(xPos){ const groundY = H - GROUND_HEIGHT(); const gap = currentPipeGap(); const margin = S(60); const minGapY = margin + gap/2; const maxGapY = groundY - margin - gap/2; const gapY = minGapY + Math.random()*(maxGapY-minGapY); const style = Math.random() < 0.5 ? 'pipe1' : 'pipe2'; pipes.push({ x: xPos, gapY: gapY, gapSize: gap, style: style, passed:false }); }
-              function currentPipeGap(){ return PIPE_GAP_BASE() - Math.min(pipesPassedThisRun * S(0.9), PIPE_GAP_BASE() - PIPE_GAP_MIN()); }
-              function currentPipeSpeed(){ return PIPE_SPEED_BASE() + Math.min(pipesPassedThisRun * S(0.035), PIPE_SPEED_MAX() - PIPE_SPEED_BASE()); }
-
-              let skyScore = 0;
-              function spawnScorePopup(val){ const el = document.createElement('div'); el.className = 'sky-score-popup'; if(equippedTheme === 'theme_heidi') { el.style.color = '#ff69b4'; el.style.textShadow = '0 0 10px #ff1493'; } else if(equippedTheme === 'theme_shasho') { el.style.color = '#ffd700'; el.style.textShadow = '0 0 10px #ffb648'; } el.textContent = '+' + val; el.style.left = (player.x + player.size) + 'px'; el.style.top = (player.y) + 'px'; popupLayer.appendChild(el); setTimeout(()=> el.remove(), 700); }
-
-              let particles = [];
-              function addFlapParticles(){ let color = '94,241,255'; if (equippedTheme === 'theme1') color = '255,255,255'; if (equippedTheme === 'theme_heidi') color = '255,105,180'; if (equippedTheme === 'theme_shasho') color = '255,215,0'; for(let i=0;i<6;i++){ particles.push({ type:'flap', x: player.x - player.size*0.3, y: player.y + player.size*0.5 + (Math.random()-0.5)*8, vx: -(1+Math.random()*2) * (H/512), vy: (Math.random()-0.5)*1.5, life: 1, decay: 0.04 + Math.random()*0.02, size: 3 + Math.random()*4, color: color }); } }
-              function addSmokeParticle(x,y){ particles.push({ type:'smoke', x:x, y:y, vx:-0.3 - Math.random()*0.4, vy:-(0.2 + Math.random()*0.5), life:1, decay:0.012 + Math.random()*0.01, size:6 + Math.random()*10, color:'200,200,210' }); }
-              function addBlastParticles(cx,cy){ for(let i=0;i<90;i++){ const angle = Math.random()*Math.PI*2; const speed = 2 + Math.random()*10; particles.push({ type:'blast', x:cx, y:cy, vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed, life:1, decay:0.008 + Math.random()*0.018, size:3 + Math.random()*9, color: Math.random()<0.5 ? '255,120,40' : '255,220,90' }); } }
-              function addCuteBlastParticles(cx, cy, isGold=false){ for(let i=0;i<60;i++){ const angle = Math.random()*Math.PI*2; const speed = 1 + Math.random()*6; let color1 = isGold ? '255,215,0' : '255,105,180'; let color2 = isGold ? '255,182,72' : '255,182,193'; particles.push({ type:'blast', x:cx, y:cy, vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed, life:1, decay:0.01 + Math.random()*0.02, size:3 + Math.random()*6, color: Math.random()<0.5 ? color1 : color2 }); } }
-              function updateParticles(){ for(let i=particles.length-1;i>=0;i--){ const p = particles[i]; p.x += p.vx; p.y += p.vy; if(p.type==='blast'){ p.vx *= 0.96; p.vy *= 0.96; p.vy += 0.05; } if(p.type==='flap'){ p.vy += 0.03; } p.life -= p.decay; if(p.life<=0) particles.splice(i,1); } }
-              function drawParticles(){ for(const p of particles){ ctx.globalAlpha = Math.max(p.life,0); ctx.fillStyle = `rgba(${p.color},${p.life})`; ctx.beginPath(); ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2); ctx.fill(); } ctx.globalAlpha = 1; }
-
-              let bgStars=[], bgClouds=[], bgFog=[], ambientParticles=[], bgTime=0;
-              function buildBackground(){ bgStars=[]; for(let i=0;i<60;i++) bgStars.push({ x: Math.random()*W, y: Math.random()*H*0.6, r: Math.random()*1.6 + 0.3, tw: Math.random()*Math.PI*2, speed: 0.3 + Math.random()*0.7 }); bgClouds=[]; for(let i=0;i<5;i++) bgClouds.push({ x: Math.random()*W, y: Math.random()*H*0.45, w: S(90) + Math.random()*S(140), h: S(28) + Math.random()*S(30), speed: 0.15 + Math.random()*0.25, alpha: 0.04 + Math.random()*0.06 }); bgFog=[]; for(let i=0;i<3;i++) bgFog.push({ x: Math.random()*W, y: H*0.55 + Math.random()*H*0.3, w: W*0.9, h: S(80), speed: 0.08 + Math.random()*0.12, alpha: 0.05 + Math.random()*0.05 }); ambientParticles=[]; for(let i=0;i<30;i++) ambientParticles.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.5+0.4, vy: -(0.1+Math.random()*0.3), vx: (Math.random()-0.5)*0.2, alpha: 0.1 + Math.random()*0.25, phase: Math.random()*Math.PI*2 }); }
-              function drawBackground(dt, speedMultiplier){
-                if (equippedTheme === 'theme1') { const grad = ctx.createLinearGradient(0,0,0,H); grad.addColorStop(0,'#4ec0ca'); grad.addColorStop(1,'#8deaf5'); ctx.fillStyle = grad; ctx.fillRect(0,0,W,H); for(const c of bgClouds){ ctx.fillStyle = `rgba(255,255,255,${c.alpha * 4})`; drawCloudShape(c.x, c.y, c.w, c.h); drawCloudShape(c.x + W, c.y, c.w, c.h); c.x -= c.speed * speedMultiplier; if(c.x < -c.w) c.x += W + c.w; } }
-                else if (equippedTheme === 'theme_heidi') { const grad = ctx.createLinearGradient(0,0,0,H); grad.addColorStop(0,'#1a1b41'); grad.addColorStop(1,'#3f3d70'); ctx.fillStyle = grad; ctx.fillRect(0,0,W,H); for(const s of bgStars){ const tw = 0.5 + 0.5*Math.sin(bgTime*0.002*s.speed + s.tw); ctx.fillStyle = `rgba(255,200,220,${0.2+tw*0.4})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill(); } for(const c of bgClouds){ ctx.fillStyle = `rgba(255,182,193,${c.alpha * 3})`; drawCloudShape(c.x, c.y, c.w, c.h); drawCloudShape(c.x + W, c.y, c.w, c.h); c.x -= c.speed * speedMultiplier; if(c.x < -c.w) c.x += W + c.w; } }
-                else if (equippedTheme === 'theme_shasho') { const grad = ctx.createLinearGradient(0,0,0,H); grad.addColorStop(0,'#161922'); grad.addColorStop(1,'#090a0d'); ctx.fillStyle = grad; ctx.fillRect(0,0,W,H); const neonGrad = ctx.createLinearGradient(0,0,0,H*0.25); neonGrad.addColorStop(0, 'rgba(255, 215, 0, 0.1)'); neonGrad.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = neonGrad; ctx.fillRect(0,0,W,H*0.25); ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)'; ctx.lineWidth = 2; ctx.beginPath(); const gridSize = S(60); for(let x = -((bgTime * 0.05) % gridSize); x < W; x += gridSize) { ctx.moveTo(x, 0); ctx.lineTo(x, H); } for(let y = 0; y < H; y += gridSize) { ctx.moveTo(0, y); ctx.lineTo(W, y); } ctx.stroke(); for(const p of ambientParticles){ ctx.fillStyle = `rgba(200,180,150,${p.alpha * 0.4})`; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); p.y += p.vy * speedMultiplier; p.x += p.vx; if(p.y < -5) p.y = H+5; if(p.x < -5) p.x = W+5; if(p.x > W+5) p.x = -5; } }
-                else { const grad = ctx.createLinearGradient(0,0,0,H); grad.addColorStop(0,'#0c1730'); grad.addColorStop(0.45,'#0a1224'); grad.addColorStop(1,'#03050c'); ctx.fillStyle = grad; ctx.fillRect(0,0,W,H); const glowY = H*0.18 + Math.sin(bgTime*0.0006)*H*0.03; const glow = ctx.createRadialGradient(W*0.5, glowY, 0, W*0.5, glowY, W*0.9); glow.addColorStop(0,'rgba(94,241,255,0.10)'); glow.addColorStop(0.5,'rgba(120,80,255,0.05)'); glow.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle = glow; ctx.fillRect(0,0,W,H); for(const s of bgStars){ const tw = 0.5 + 0.5*Math.sin(bgTime*0.002*s.speed + s.tw); ctx.fillStyle = `rgba(200,230,255,${0.15+tw*0.35})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill(); } for(const c of bgClouds){ ctx.fillStyle = `rgba(160,200,255,${c.alpha})`; drawCloudShape(c.x, c.y, c.w, c.h); drawCloudShape(c.x + W, c.y, c.w, c.h); c.x -= c.speed * speedMultiplier; if(c.x < -c.w) c.x += W + c.w; } for(const f of bgFog){ const fgrad = ctx.createLinearGradient(0, f.y, 0, f.y+f.h); fgrad.addColorStop(0, `rgba(160,190,255,0)`); fgrad.addColorStop(0.5, `rgba(160,190,255,${f.alpha})`); fgrad.addColorStop(1, `rgba(160,190,255,0)`); ctx.fillStyle = fgrad; ctx.fillRect(f.x - W, f.y, W*2, f.h); ctx.fillRect(f.x, f.y, W*2, f.h); f.x -= f.speed * speedMultiplier; if(f.x < -W) f.x += W; } for(const p of ambientParticles){ const flicker = 0.5+0.5*Math.sin(bgTime*0.003 + p.phase); ctx.fillStyle = `rgba(180,220,255,${p.alpha*flicker})`; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); p.y += p.vy * speedMultiplier; p.x += p.vx; if(p.y < -5) p.y = H+5; if(p.x < -5) p.x = W+5; if(p.x > W+5) p.x = -5; } }
-                bgTime += dt;
-              }
-              function drawCloudShape(x,y,w,h){ ctx.beginPath(); ctx.ellipse(x, y, w*0.5, h*0.5, 0, 0, Math.PI*2); ctx.ellipse(x+w*0.3, y-h*0.15, w*0.35, h*0.4, 0, 0, Math.PI*2); ctx.ellipse(x-w*0.3, y-h*0.1, w*0.3, h*0.35, 0, 0, Math.PI*2); ctx.fill(); }
-
-              let groundScrollX = 0;
-              function drawGround(speedMultiplier){
-                const gy = H - GROUND_HEIGHT();
-                if (equippedTheme === 'theme1') { const grad = ctx.createLinearGradient(0,gy,0,H); grad.addColorStop(0,'#73bf2e'); grad.addColorStop(1,'#569022'); ctx.fillStyle = grad; ctx.fillRect(0,gy,W,GROUND_HEIGHT()); ctx.fillStyle = '#548f21'; ctx.fillRect(0,gy,W,4); const segW = S(40); ctx.fillStyle = 'rgba(0,0,0,0.1)'; for(let x = -((groundScrollX) % segW); x < W; x += segW){ ctx.fillRect(x, gy+6, segW*0.3, GROUND_HEIGHT()-12); } }
-                else if (equippedTheme === 'theme_heidi') { const grad = ctx.createLinearGradient(0,gy,0,H); grad.addColorStop(0,'#2d2b55'); grad.addColorStop(1,'#1a1936'); ctx.fillStyle = grad; ctx.fillRect(0,gy,W,GROUND_HEIGHT()); ctx.fillStyle = '#ff69b4'; ctx.fillRect(0,gy,W,3); ctx.fillStyle = 'rgba(0,0,0,0.15)'; const segW = S(40); for(let x = -((groundScrollX) % segW); x < W; x += segW){ ctx.fillRect(x, gy+6, segW*0.3, GROUND_HEIGHT()-12); } }
-                else if (equippedTheme === 'theme_shasho') { const grad = ctx.createLinearGradient(0,gy,0,H); grad.addColorStop(0,'#1a1a1a'); grad.addColorStop(1,'#0d0d0d'); ctx.fillStyle = grad; ctx.fillRect(0,gy,W,GROUND_HEIGHT()); ctx.fillStyle = '#ff3b4e'; ctx.fillRect(0,gy,W,4); ctx.fillStyle = 'rgba(0,0,0,0.4)'; const segW = S(20); for(let x = -((groundScrollX) % segW); x < W; x += segW){ ctx.fillRect(x, gy+8, segW*0.4, GROUND_HEIGHT()-16); } }
-                else { const grad = ctx.createLinearGradient(0,gy,0,H); grad.addColorStop(0,'#141c30'); grad.addColorStop(1,'#05080f'); ctx.fillStyle = grad; ctx.fillRect(0,gy,W,GROUND_HEIGHT()); ctx.fillStyle = 'rgba(94,241,255,0.35)'; ctx.fillRect(0,gy,W,2); ctx.shadowColor = 'rgba(94,241,255,0.5)'; ctx.shadowBlur = 8; ctx.fillRect(0,gy,W,2); ctx.shadowBlur = 0; const segW = S(40); ctx.fillStyle = 'rgba(120,160,220,0.08)'; for(let x = -((groundScrollX) % segW); x < W; x += segW) ctx.fillRect(x, gy+8, segW*0.5, GROUND_HEIGHT()-16); }
-                groundScrollX += currentPipeSpeed()*speedMultiplier;
-              }
-
-              function drawPipes(){
-                const groundY = H - GROUND_HEIGHT(); const pw = PIPE_WIDTH();
-                for(const p of pipes){
-                  if (equippedTheme === 'theme_shasho') {
-                    const topHeight = Math.max(p.gapY - p.gapSize/2, 0); const bottomY = p.gapY + p.gapSize/2; const bottomHeight = Math.max(groundY - bottomY, 0);
-                    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 8; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 4;
-                    const handleWidth = pw * 0.25; const handleX = p.x + (pw - handleWidth) / 2;
-                    const handleGrad = ctx.createLinearGradient(handleX, 0, handleX + handleWidth, 0); handleGrad.addColorStop(0, '#90959a'); handleGrad.addColorStop(0.5, '#ffffff'); handleGrad.addColorStop(1, '#70757a');
-                    const plateGrad = ctx.createLinearGradient(p.x, 0, p.x + pw, 0); plateGrad.addColorStop(0, '#666b73'); plateGrad.addColorStop(0.2, '#a5abb3'); plateGrad.addColorStop(0.5, '#dce1e8'); plateGrad.addColorStop(0.8, '#858b94'); plateGrad.addColorStop(1, '#4a4f56');
-                    const plateHeight = S(22);
-                    if(topHeight > 0) { ctx.fillStyle = handleGrad; ctx.fillRect(handleX, 0, handleWidth, topHeight); ctx.fillStyle = plateGrad; ctx.fillRect(p.x, topHeight - plateHeight, pw, plateHeight); ctx.fillRect(p.x + pw*0.1, topHeight - plateHeight*2.2, pw*0.8, plateHeight*1.2); ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1.5; ctx.strokeRect(p.x, topHeight - plateHeight, pw, plateHeight); ctx.strokeRect(p.x + pw*0.1, topHeight - plateHeight*2.2, pw*0.8, plateHeight*1.2); }
-                    if(bottomHeight > 0) { ctx.fillStyle = handleGrad; ctx.fillRect(handleX, bottomY, handleWidth, bottomHeight); ctx.fillStyle = plateGrad; ctx.fillRect(p.x, bottomY, pw, plateHeight); ctx.fillRect(p.x + pw*0.1, bottomY + plateHeight, pw*0.8, plateHeight*1.2); ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1.5; ctx.strokeRect(p.x, bottomY, pw, plateHeight); ctx.strokeRect(p.x + pw*0.1, bottomY + plateHeight, pw*0.8, plateHeight*1.2); }
-                    ctx.restore(); continue;
-                  }
-                  let topImg, bottomImg;
-                  if (equippedTheme === 'theme1' || equippedTheme === 'theme_heidi') { const img = images['t1_pipe']; const flipped = flippedImages['t1_pipe']; if(!img) continue; topImg = img; bottomImg = flipped; } else { const img = images[p.style]; const flipped = flippedImages[p.style]; if(!img) continue; topImg = flipped; bottomImg = img; }
-                  const topHeight = Math.max(p.gapY - p.gapSize/2, 0); const bottomY = p.gapY + p.gapSize/2; const bottomHeight = Math.max(groundY - bottomY, 0);
-                  ctx.save();
-                  if(equippedTheme === 'theme2') { ctx.shadowColor = 'rgba(94,241,255,0.18)'; ctx.shadowBlur = 14; }
-                  if(equippedTheme === 'theme_heidi'){ ctx.filter = 'hue-rotate(190deg) saturate(140%) brightness(1.1)'; }
-                  if(topHeight > 0) { ctx.save(); ctx.translate(p.x, p.gapY - p.gapSize/2); ctx.scale(1, -1); ctx.drawImage(topImg, 0, 0, pw, H); ctx.restore(); } 
-                  if(bottomHeight > 0) ctx.drawImage(bottomImg, p.x, bottomY, pw, 400); 
-                  ctx.restore();
-                }
-              }
-              function updatePipes(speedMultiplier){ const speed = currentPipeSpeed() * speedMultiplier; for(const p of pipes) p.x -= speed; while(pipes.length && pipes[0].x + PIPE_WIDTH() < -S(20)) pipes.shift(); const last = pipes[pipes.length-1]; if(last && last.x < W + S(40) - PIPE_SPACING()) spawnPipe(last.x + PIPE_SPACING()); }
-              function checkCollisions(){ const groundY = H - GROUND_HEIGHT(); const pw = PIPE_WIDTH(); const hitboxPad = player.size * 0.16; const px = player.x + hitboxPad; const py = player.y + hitboxPad; const psize = player.size - hitboxPad*2; if(player.y - hitboxPad <= 0) return true; if(player.y + player.size - hitboxPad >= groundY) return true; for(const p of pipes){ const topHeight = p.gapY - p.gapSize/2; const bottomY = p.gapY + p.gapSize/2; const pipeLeft = p.x; const pipeRight = p.x + pw; if(px < pipeRight && px+psize > pipeLeft) if(py < topHeight || py+psize > bottomY) return true; } return false; }
-
-              function drawPlayer(){ const img = images.player; if(!img) return; ctx.save(); ctx.translate(player.x + player.size/2, player.y + player.size/2); ctx.rotate(player.rotation); if(equippedTheme === 'theme2') { ctx.shadowColor = 'rgba(94,241,255,0.55)'; ctx.shadowBlur = 16; } if(equippedTheme === 'theme_heidi') { ctx.shadowColor = 'rgba(255,105,180,0.8)'; ctx.shadowBlur = 20; } if(equippedTheme === 'theme_shasho') { ctx.shadowColor = 'rgba(255,215,0,0.5)'; ctx.shadowBlur = 15; } ctx.drawImage(img, -player.size/2, -player.size/2, player.size, player.size); ctx.restore(); }
-
-              let lastTime = 0; let rafId = null;
-              function gameLoop(timestamp){ if(!lastTime) lastTime = timestamp; const dt = Math.min(timestamp - lastTime, 50); lastTime = timestamp; update(dt); render(dt); rafId = requestAnimationFrame(gameLoop); }
-
-              function update(dt){
-                if(gameState === STATE.PLAYING || gameState === STATE.SECRET_GLITCH){
-                  player.vy += GRAVITY(); if(player.vy > MAX_FALL_SPEED()) player.vy = MAX_FALL_SPEED(); player.y += player.vy;
-                  const targetRot = Math.max(-0.5, Math.min(player.vy * 0.08, 1.2)); player.rotation += (targetRot - player.rotation) * 0.18;
-                  updatePipes(1); const pw = PIPE_WIDTH();
-                  for(const p of pipes){
-                    if(!p.passed && p.x + pw < player.x){
-                      p.passed = true; pipesPassedThisRun++; let pointsToAdd = (equippedTheme === 'theme_heidi') ? 10 : 1;
-                      skyScore += pointsToAdd; scoreText.textContent = skyScore; sfx.score(); spawnScorePopup(pointsToAdd); scoreText.classList.add('shake-skyfall'); setTimeout(()=>scoreText.classList.remove('shake-skyfall'), 200); addCurrency(pointsToAdd);
-                      if(pipesPassedThisRun % 15 === 0){ addLife(); } if(skyScore >= 911 && skyScore - pointsToAdd < 911) triggerSecretSequence();
+            function simonPlaySeq() {
+                const st = state.games.simon; if(!st.active) return;
+                let i = 0;
+                const interval = setInterval(() => {
+                    if(!st.active || i >= st.seq.length) {
+                        clearInterval(interval);
+                        if(st.active) st.clickable = true;
+                        return;
                     }
-                  }
-                  if(gameState === STATE.PLAYING && checkCollisions()){ if(!invincible && !consumeLife()){ triggerCrashEffect(); } }
-                  if(invincible){ invincTimer += dt; if(invincTimer >= INVINC_DURATION) endInvincibility(); } if(slowMoTimer > 0) slowMoTimer -= dt; if(player.vy > S(4)) addSmokeParticle(player.x + player.size*0.2, player.y + player.size*0.5);
+                    simonLight(st.seq[i]);
+                    i++;
+                }, 600);
+            }
+
+            function simonLight(i) {
+                const btn = document.getElementById(`sb-${i}`);
+                if(btn) {
+                    btn.classList.add('lit');
+                    fx.simon(i);
+                    setTimeout(() => btn.classList.remove('lit'), 300);
                 }
-                else if(gameState === STATE.CRASHING) updateCrashEffect(dt);
-                else if(gameState === STATE.START){ player.idleBob += dt*0.003; player.y = H*0.42 + Math.sin(player.idleBob)*S(10); player.rotation = Math.sin(player.idleBob)*0.08; }
-                updateParticles(); if(gameState === STATE.SECRET_GLITCH) updateGlitchPhase(dt); if(gameState === STATE.SECRET_EXPLOSION) updateExplosionPhase(dt);
-              }
+            }
 
-              function render(dt){
-                if(gameState === STATE.LOADING) return; let speedMultiplier = 1; if(gameState === STATE.SECRET_GLITCH) speedMultiplier = 1 + glitchIntensity*0.6; if(slowMoTimer > 0) speedMultiplier *= 0.35;
-                ctx.save(); let shakeX = 0, shakeY = 0; if(screenShake > 0){ shakeX = (Math.random()-0.5)*screenShake; shakeY = (Math.random()-0.5)*screenShake; screenShake *= 0.9; if(screenShake < 0.2) screenShake = 0; }
-                ctx.translate(shakeX, shakeY); const isFrozen = (gameState===STATE.PAUSED || gameState===STATE.CRASHING);
-                drawBackground(dt, isFrozen?0:speedMultiplier); drawPipes(); drawGround(isFrozen?0:speedMultiplier); drawParticles();
-                if(gameState !== STATE.CRASHING) drawPlayer(); else drawCrashGlow(); ctx.restore();
-                if(gameState === STATE.SECRET_EXPLOSION || gameState === STATE.SECRET_FINAL) renderExplosionOverlay();
-              }
-
-              function drawCrashGlow(){
-                const t = Math.min(crashTimer / CRASH_EFFECT_DURATION, 1); const cx = player.x + player.size/2; const cy = player.y + player.size/2; const radius = player.size * (1.5 + t*2.5); const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,radius);
-                if (equippedTheme === 'theme_heidi') { grad.addColorStop(0, `rgba(255,105,180,${0.7*(1-t)})`); grad.addColorStop(0.5, `rgba(255,182,193,${0.35*(1-t)})`); grad.addColorStop(1, 'rgba(255,192,203,0)'); } else if (equippedTheme === 'theme_shasho') { grad.addColorStop(0, `rgba(255,215,0,${0.7*(1-t)})`); grad.addColorStop(0.5, `rgba(255,182,72,${0.35*(1-t)})`); grad.addColorStop(1, 'rgba(255,215,0,0)'); } else { grad.addColorStop(0, `rgba(255,${200-Math.floor(t*120)},80,${0.7*(1-t)})`); grad.addColorStop(0.5, `rgba(255,90,40,${0.35*(1-t)})`); grad.addColorStop(1, 'rgba(255,40,20,0)'); }
-                ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(cx,cy,radius,0,Math.PI*2); ctx.fill();
-              }
-
-              let screenShake = 0;
-              function flap(){ if(gameState !== STATE.PLAYING && gameState !== STATE.SECRET_GLITCH) return; player.vy = FLAP_VELOCITY(); addFlapParticles(); sfx.flap(); }
-              function startGame(){ initAudio(); sfx.click(); skyScore = 0; scoreText.textContent = '0'; resetPlayer(); resetPipes(); particles = []; screenShake = 0; chromaticOverlay.style.opacity = 0; flashOverlay.style.opacity = 0; crackOverlay.style.opacity = 0; wrap.classList.remove('shake-skyfall'); lives = 0; if(extraLifeUses > 0) { lives = 1; extraLifeUses--; saveData(); } invincible = false; invincTimer = 0; slowMoTimer = 0; wrap.style.animation = ''; renderLivesHud(); document.getElementById('livesHud').classList.add('visible'); document.getElementById('currencyHud').classList.add('visible'); applyEquippedSkin(); gameState = STATE.PLAYING; startScreen.classList.add('hidden'); gameOverScreen.classList.add('hidden'); secretFinalScreen.classList.add('hidden'); pauseScreen.classList.add('hidden'); hudElement.classList.remove('hidden'); }
-
-              let crashTimer = 0; const CRASH_EFFECT_DURATION = 850;
-              function triggerCrashEffect(){
-                gameState = STATE.CRASHING; crashTimer = 0; const cx = player.x + player.size/2; const cy = player.y + player.size/2; 
-                if (equippedTheme === 'theme_heidi') { sfx.smash(); screenShake = 10; flashOverlay.style.background = '#ffb6c1'; flashOverlay.style.opacity = '0.7'; chromaticOverlay.style.opacity = '0.3'; addCuteBlastParticles(cx, cy); addCuteBlastParticles(cx, cy); } else if (equippedTheme === 'theme_shasho') { sfx.smash(); screenShake = 18; flashOverlay.style.background = '#ffd700'; flashOverlay.style.opacity = '0.7'; chromaticOverlay.style.opacity = '0.4'; addCuteBlastParticles(cx, cy, true); addCuteBlastParticles(cx, cy, true); } else { sfx.smash(); setTimeout(()=>sfx.blast(), 90); screenShake = 22; flashOverlay.style.background = '#ffffff'; flashOverlay.style.opacity = '0.85'; chromaticOverlay.style.opacity = '0.6'; addBlastParticles(cx, cy); addBlastParticles(cx, cy); }
-                player.vy = 0; wrap.classList.add('shake-skyfall'); hudElement.classList.add('hidden'); document.getElementById('livesHud').classList.remove('visible'); heidiTitle.classList.add('hidden'); shashoTitle.classList.add('hidden');
-              }
-              function updateCrashEffect(dt){ crashTimer += dt; const flashT = Math.min(crashTimer/250, 1); const maxFlashOpacity = (equippedTheme === 'theme_heidi' || equippedTheme === 'theme_shasho') ? 0.7 : 0.85; flashOverlay.style.opacity = String(Math.max(maxFlashOpacity - flashT*maxFlashOpacity, 0)); const chromaT = Math.min(crashTimer/400, 1); const maxChroma = equippedTheme === 'theme_heidi' ? 0.3 : (equippedTheme === 'theme_shasho' ? 0.4 : 0.6); chromaticOverlay.style.opacity = String(Math.max(maxChroma - chromaT*maxChroma, 0)); if(crashTimer >= CRASH_EFFECT_DURATION){ wrap.classList.remove('shake-skyfall'); flashOverlay.style.opacity = '0'; chromaticOverlay.style.opacity = '0'; handleGameOver(); } }
-
-              function handleGameOver(){
-                gameState = STATE.GAMEOVER; if(skyScore > bestScore){ bestScore = skyScore; localStorage.setItem('skyfall_best', String(bestScore)); } finalScoreText.textContent = '0'; bestTextOver.textContent = bestScore; bestTextHud.textContent = 'BEST ' + bestScore; bestTextStart.textContent = bestScore; let counted = 0; const target = skyScore; const step = Math.max(1, Math.ceil(target/30)); const counter = setInterval(()=>{ counted += step; if(counted >= target){ counted = target; clearInterval(counter); } finalScoreText.textContent = counted; }, 30); gameOverScreen.classList.remove('hidden');
-                if(skyScore > 0) window.bcastScore('Skyfall 🚀', 'FLAPPY', skyScore); 
-              }
-              function returnToMenu(){ gameState = STATE.START; gameOverScreen.classList.add('hidden'); pauseScreen.classList.add('hidden'); secretFinalScreen.classList.add('hidden'); hudElement.classList.add('hidden'); document.getElementById('livesHud').classList.remove('visible'); startScreen.classList.remove('hidden'); chromaticOverlay.style.opacity = 0; flashOverlay.style.opacity = 0; crackOverlay.style.opacity = 0; wrap.classList.remove('shake-skyfall'); wrap.style.animation = ''; skyScore = 0; resetPlayer(); resetPipes(); bestTextStart.textContent = bestScore; document.getElementById('currencyHud').classList.add('visible'); applyEquippedSkin(); }
-              function togglePause(){ if(gameState === STATE.PLAYING){ gameState = STATE.PAUSED; pauseScreen.classList.remove('hidden'); sfx.click(); } else if(gameState === STATE.PAUSED){ gameState = STATE.PLAYING; pauseScreen.classList.add('hidden'); sfx.click(); } }
-              
-              window.haltSkyfall = function() { if (gameState === STATE.PLAYING) { gameState = STATE.PAUSED; pauseScreen.classList.remove('hidden'); } };
-
-              let glitchIntensity = 0; let glitchTimer = 0; let explosionTimer = 0;
-              function triggerSecretSequence(){ gameState = STATE.SECRET_GLITCH; glitchIntensity = 0; glitchTimer = 0; hudElement.classList.add('hidden'); heidiTitle.classList.add('hidden'); shashoTitle.classList.add('hidden'); sfx.alarm(); }
-              function updateGlitchPhase(dt){ glitchTimer += dt; glitchIntensity = Math.min(glitchTimer / 3000, 1); chromaticOverlay.style.opacity = (0.3 + Math.random()*0.5*glitchIntensity).toFixed(2); if(Math.random() < 0.15 + glitchIntensity*0.3) screenShake = 4 + Math.random()*10*glitchIntensity; if(Math.random() < 0.06 + glitchIntensity*0.1){ flashOverlay.style.background = '#ff1f33'; flashOverlay.style.opacity = (0.15 + Math.random()*0.25).toFixed(2); setTimeout(()=>{ flashOverlay.style.opacity = 0; }, 60); } if(Math.random() < 0.08 + glitchIntensity*0.15) sfx.glitch(); if(Math.random() < 0.03) sfx.alarm(); if(Math.random() < 0.1) hudElement.style.opacity = Math.random() < 0.5 ? '0.2' : '1'; else hudElement.style.opacity = '1'; if(glitchTimer >= 3000) beginExplosionPhase(); }
-              function beginExplosionPhase(){ gameState = STATE.SECRET_EXPLOSION; explosionTimer = 0; chromaticOverlay.style.opacity = 0; hudElement.style.opacity = '1'; flashOverlay.style.background = '#ffffff'; flashOverlay.style.opacity = '1'; sfx.blast(); screenShake = 40; addBlastParticles(player.x+player.size/2, player.y+player.size/2); addBlastParticles(W*0.5, H*0.5); addBlastParticles(W*0.3, H*0.4); addBlastParticles(W*0.7, H*0.6); wrap.classList.add('shake-skyfall'); crackOverlay.style.opacity = '0.9'; }
-              function updateExplosionPhase(dt){ explosionTimer += dt; const flashProgress = Math.min(explosionTimer/600, 1); flashOverlay.style.opacity = String(Math.max(1 - flashProgress*1.2, 0)); if(screenShake < 5 && Math.random()<0.3) screenShake = 8; if(explosionTimer > 1800 && gameState === STATE.SECRET_EXPLOSION){ gameState = STATE.SECRET_FINAL; wrap.classList.remove('shake-skyfall'); finishSecretSequence(); } }
-              function renderExplosionOverlay(){ if(gameState !== STATE.SECRET_EXPLOSION) return; const grad = ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)); const t = Math.min(explosionTimer/1800, 1); grad.addColorStop(0, `rgba(255,${160-Math.floor(t*120)},40,${0.5*(1-t)})`); grad.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = grad; ctx.fillRect(0,0,W,H); }
-              function finishSecretSequence(){ crackOverlay.style.opacity = '0.5'; secretFinalScreen.classList.remove('hidden'); }
-
-              function handleAction(){ if(gameState === STATE.START) startGame(); else if(gameState === STATE.PLAYING || gameState === STATE.SECRET_GLITCH) flap(); }
-              window.addEventListener('keydown', (e)=>{ 
-                  if(document.getElementById('flappy-modal').classList.contains('active')) {
-                      if(e.code === 'Space'){ e.preventDefault(); handleAction(); } 
-                      if(e.code === 'KeyP') togglePause(); 
-                  }
-              });
-              wrap.addEventListener('pointerdown', (e)=>{ if(e.target.closest('button') || e.target.closest('.sky-icon-btn') || e.target.closest('.shop-tab-btn') || e.target.closest('.btn-close-game')) return; handleAction(); });
-
-              document.getElementById('pauseBtn').addEventListener('click', (e)=>{ e.stopPropagation(); togglePause(); });
-              document.getElementById('muteBtn').addEventListener('click', (e)=>{ e.stopPropagation(); initAudio(); setMuted(!muted); });
-              document.getElementById('resumeBtn').addEventListener('click', (e)=>{ e.stopPropagation(); togglePause(); });
-              document.getElementById('restartFromPauseBtn').addEventListener('click', (e)=>{ e.stopPropagation(); pauseScreen.classList.add('hidden'); startGame(); });
-              document.getElementById('menuFromPauseBtn').addEventListener('click', (e)=>{ e.stopPropagation(); pauseScreen.classList.add('hidden'); returnToMenu(); });
-              document.getElementById('restartBtn').addEventListener('click', (e)=>{ e.stopPropagation(); startGame(); });
-              document.getElementById('menuBtn').addEventListener('click', (e)=>{ e.stopPropagation(); returnToMenu(); });
-              document.getElementById('secretRestartBtn').addEventListener('click', (e)=>{ e.stopPropagation(); wrap.classList.remove('shake-skyfall'); crackOverlay.style.opacity = 0; flashOverlay.style.opacity = 0; chromaticOverlay.style.opacity = 0; startGame(); });
-              document.getElementById('secretMenuBtn').addEventListener('click', (e)=>{ e.stopPropagation(); wrap.classList.remove('shake-skyfall'); crackOverlay.style.opacity = 0; flashOverlay.style.opacity = 0; chromaticOverlay.style.opacity = 0; returnToMenu(); });
-
-              const sfx = {
-                flap(){ if(!actx||muted) return; const t0 = actx.currentTime; const osc = actx.createOscillator(); const g = actx.createGain(); osc.type = 'triangle'; osc.frequency.setValueAtTime(420, t0); osc.frequency.exponentialRampToValueAtTime(680, t0+0.09); g.gain.setValueAtTime(0.18, t0); g.gain.exponentialRampToValueAtTime(0.001, t0+0.14); osc.connect(g); g.connect(masterGain); osc.start(t0); osc.stop(t0+0.16); },
-                score(){ if(!actx||muted) return; const t0 = actx.currentTime; [880,1175,1568].forEach((f,i)=>{ const osc = actx.createOscillator(); const g = actx.createGain(); osc.type = 'square'; osc.frequency.setValueAtTime(f, t0+i*0.045); g.gain.setValueAtTime(0.12, t0+i*0.045); g.gain.exponentialRampToValueAtTime(0.001, t0+i*0.045+0.18); osc.connect(g); g.connect(masterGain); osc.start(t0+i*0.045); osc.stop(t0+i*0.045+0.2); }); },
-                smash(){ if(!actx||muted) return; const t0 = actx.currentTime; const osc = actx.createOscillator(); const g = actx.createGain(); osc.type = 'sawtooth'; osc.frequency.setValueAtTime(180, t0); osc.frequency.exponentialRampToValueAtTime(40, t0+0.3); g.gain.setValueAtTime(0.3, t0); g.gain.exponentialRampToValueAtTime(0.001, t0+0.35); osc.connect(g); g.connect(masterGain); osc.start(t0); osc.stop(t0+0.4); },
-                blast(){ if(!actx||muted) return; const bufferSize = actx.sampleRate * 1.2; const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate); const data = buffer.getChannelData(0); for(let i=0;i<bufferSize;i++){ data[i] = (Math.random()*2-1) * Math.pow(1 - i/bufferSize, 2); } const noise = actx.createBufferSource(); noise.buffer = buffer; const filter = actx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.setValueAtTime(2200, actx.currentTime); filter.frequency.exponentialRampToValueAtTime(80, actx.currentTime+1.1); const g = actx.createGain(); g.gain.setValueAtTime(0.55, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime+1.2); noise.connect(filter); filter.connect(g); g.connect(masterGain); noise.start(); const osc = actx.createOscillator(); const og = actx.createGain(); osc.type='sine'; osc.frequency.setValueAtTime(90, actx.currentTime); osc.frequency.exponentialRampToValueAtTime(20, actx.currentTime+1.0); og.gain.setValueAtTime(0.5, actx.currentTime); og.gain.exponentialRampToValueAtTime(0.001, actx.currentTime+1.1); osc.connect(og); og.connect(masterGain); osc.start(); osc.stop(actx.currentTime+1.1); },
-                click(){ if(!actx||muted) return; const t0 = actx.currentTime; const osc = actx.createOscillator(); const g = actx.createGain(); osc.type='square'; osc.frequency.setValueAtTime(520,t0); g.gain.setValueAtTime(0.1,t0); g.gain.exponentialRampToValueAtTime(0.001,t0+0.08); osc.connect(g); g.connect(masterGain); osc.start(t0); osc.stop(t0+0.1); },
-                alarm(){ if(!actx||muted) return; const t0 = actx.currentTime; const osc = actx.createOscillator(); const g = actx.createGain(); osc.type='square'; osc.frequency.setValueAtTime(740,t0); osc.frequency.setValueAtTime(440,t0+0.12); osc.frequency.setValueAtTime(740,t0+0.24); g.gain.setValueAtTime(0.18,t0); g.gain.exponentialRampToValueAtTime(0.001,t0+0.4); osc.connect(g); g.connect(masterGain); osc.start(t0); osc.stop(t0+0.42); },
-                glitch(){ if(!actx||muted) return; const t0 = actx.currentTime; const osc = actx.createOscillator(); const g = actx.createGain(); osc.type='sawtooth'; osc.frequency.setValueAtTime(60 + Math.random()*900, t0); g.gain.setValueAtTime(0.08, t0); g.gain.exponentialRampToValueAtTime(0.001, t0+0.08); osc.connect(g); g.connect(masterGain); osc.start(t0); osc.stop(t0+0.1); }
-              };
-
-              Promise.all([ loadImage('theme1', THEMES[0].imgUrl), loadImage('t2_default', SKINS[0].imageUrl), loadImage('pipe1', ASSET_URLS.pipe1), loadImage('pipe2', ASSET_URLS.pipe2), loadImage('t1_pipe', ASSET_URLS.t1_pipe), loadImage('heidi', ASSET_URLS.heidi), loadImage('shasho', ASSET_URLS.shasho) ]).then(()=>{ SKINS.slice(1).forEach(s=>loadImage(s.id, s.imageUrl)); setTimeout(()=>{ document.getElementById('loadingScreen').classList.add('hidden'); startScreen.classList.remove('hidden'); gameState = STATE.START; document.getElementById('currencyHud').classList.add('visible'); }, 350); });
-              resetPlayer(); buildBackground(); resetPipes(); rafId = requestAnimationFrame(gameLoop);
-
-              // ---------------- SHOP & CHEAT INJECTION ----------------
-              const shopOverlay = document.getElementById('shopOverlay'); const shopContentArea = document.getElementById('shopContentArea'); const shopTabs = document.querySelectorAll('.shop-tab-btn'); let currentShopTab = 'themes';
-              function showShopMsg(txt, pink = false, gold = false){ const existing = document.getElementById('shopToast'); if(existing) existing.remove(); const t = document.createElement('div'); t.id='shopToast'; t.textContent=txt; if(pink) { t.style.background = 'rgba(255,105,180,0.15)'; t.style.borderColor = 'rgba(255,105,180,0.6)'; t.style.color = '#ffb6c1'; t.style.boxShadow = '0 0 20px rgba(255,105,180,0.3)'; } else if (gold) { t.style.background = 'rgba(255,215,0,0.15)'; t.style.borderColor = 'rgba(255,215,0,0.6)'; t.style.color = '#ffd700'; t.style.boxShadow = '0 0 20px rgba(255,215,0,0.3)'; } document.getElementById('gameWrap').appendChild(t); setTimeout(()=> { t.style.opacity = '0'; setTimeout(()=>t.remove(), 300); },1800); }
-              function buySkyItem(id, type){ let item; if (type === 'theme') { item = THEMES.find(t=>t.id===id); if(totalCurrency < item.price) { showShopMsg('NOT ENOUGH CREDITS'); return; } totalCurrency -= item.price; unlockedThemes.push(id); saveData(); } else if (type === 'skin') { item = SKINS.find(s=>s.id===id); if(totalCurrency < item.price) { showShopMsg('NOT ENOUGH CREDITS'); return; } totalCurrency -= item.price; unlockedSkins.push(id); saveData(); } else if (type === 'upgrade') { if(totalCurrency < 350) { showShopMsg('NOT ENOUGH CREDITS'); return; } totalCurrency -= 350; extraLifeUses = 5; saveData(); } sfx.score(); updateSkyCurrencyUI(); renderShopContent(); showShopUnlockEffect(); }
-              function triggerSecretSkinUnlock(skinId){ sfx.alarm(); flashOverlay.style.background = '#ff0000'; flashOverlay.style.opacity = '0.8'; screenShake = 20; wrap.classList.add('shake-skyfall'); setTimeout(() => { flashOverlay.style.opacity = '0'; wrap.classList.remove('shake-skyfall'); sfx.blast(); buySkyItem(skinId, 'skin'); showShopMsg('PROJECT 911 ACQUIRED'); }, 400); }
-              function equipSkyItem(id, type){ sfx.click(); if(type === 'theme') { equippedTheme = id; saveData(); applyEquippedSkin(); } else if(type === 'skin') { equippedSkin = id; saveData(); applyEquippedSkin(); } renderShopContent(); }
-              function updateSkyCurrencyUI(){ const el = document.getElementById('currencyVal'); if(el) el.textContent = totalCurrency; const sel = document.getElementById('shopCurrencyVal'); if(sel) sel.textContent = totalCurrency; }
-              function renderShopContent(){
-                shopContentArea.innerHTML = '';
-                if (currentShopTab === 'themes') {
-                  let currentThemesList = [...THEMES];
-                  if (heidiUnlocked) { currentThemesList.push({ id: 'theme_heidi', name: 'FLAPPY HEIDI', price: 0, imgUrl: ASSET_URLS.heidi, desc: 'Secret Theme.', isHeidi: true }); }
-                  if (shashoUnlocked) { currentThemesList.push({ id: 'theme_shasho', name: 'SHASHO GYM', price: 0, imgUrl: ASSET_URLS.shasho, desc: 'Secret Theme.', isShasho: true }); }
-                  currentThemesList.forEach(t => {
-                    const unlocked = (t.isHeidi || t.isShasho) ? true : unlockedThemes.includes(t.id); const active = equippedTheme === t.id;
-                    let cardClasses = `skyfall-shop-card ${active ? 'equipped' : ''}`; if (t.isHeidi) cardClasses += ' heidi'; if (t.isShasho) cardClasses += ' shasho';
-                    const div = document.createElement('div'); div.className = cardClasses;
-                    let actionHTML = '';
-                    if (active) { actionHTML = `<button class="sky-shop-btn ${t.isHeidi?'heidi-equipped-btn': (t.isShasho ? 'shasho-equipped-btn' : 'equipped-btn')}">✓ EQUIPPED</button>`; } else if (unlocked) { actionHTML = `<button class="sky-shop-btn ${t.isHeidi?'heidi-equip-btn': (t.isShasho ? 'shasho-equip-btn' : 'equip-btn')}" onclick="window.equipSkyItem('${t.id}', 'theme')">EQUIP</button>`; } else { actionHTML = `<button class="sky-shop-btn buy-btn" onclick="window.buySkyItem('${t.id}', 'theme')">${t.price} 💰 BUY</button>`; }
-                    let titleStyle = ''; let unlockedStyle = ''; if (t.isHeidi) { titleStyle = 'style="color:#ffb6c1;"'; unlockedStyle = 'style="color:#ff69b4;text-shadow:0 0 8px #ff69b4;"'; } if (t.isShasho) { titleStyle = 'style="color:#ffd700;"'; unlockedStyle = 'style="color:#ffd700;text-shadow:0 0 8px #ffb648;"'; }
-                    div.innerHTML = `<div class="card-img-wrap"><img src="${t.imgUrl}" class="card-img ${unlocked?'':'locked-img'}"></div><div class="card-info"><div class="card-title" ${titleStyle}>${t.name}</div><div class="card-desc">${t.desc}</div>${unlocked ? `<div class="card-price free" ${unlockedStyle}>UNLOCKED</div>` : `<div class="card-price">${t.price} 💰</div>`}</div><div class="card-actions">${actionHTML}</div>`;
-                    shopContentArea.appendChild(div);
-                  });
-                } else if (currentShopTab === 'skins') {
-                  if (equippedTheme !== 'theme2') { const warn = document.createElement('div'); warn.className = 'theme-warning'; warn.textContent = '⚠️ SKINS ONLY FOR AIRCRAFT THEME'; shopContentArea.appendChild(warn); }
-                  SKINS.forEach(s => {
-                    const unlocked = unlockedSkins.includes(s.id); const active = equippedSkin === s.id; const disableBtn = equippedTheme !== 'theme2' ? 'disabled-btn' : '';
-                    const div = document.createElement('div'); div.className = `skyfall-shop-card ${active && equippedTheme === 'theme2' ? 'equipped' : ''} ${s.secret?'secret':''}`;
-                    let actionHTML = '';
-                    if (active && equippedTheme === 'theme2') { actionHTML = `<button class="sky-shop-btn equipped-btn">✓ EQUIPPED</button>`; } else if (unlocked) { actionHTML = `<button class="sky-shop-btn equip-btn ${disableBtn}" ${!disableBtn ? `onclick="window.equipSkyItem('${s.id}', 'skin')"` : ''}>EQUIP</button>`; } else { if (s.secret) actionHTML = `<button class="sky-shop-btn secret-btn ${disableBtn}" ${!disableBtn ? `onclick="window.triggerSecretSkinUnlock('${s.id}')"` : ''}>${s.price} 💰 UNLOCK</button>`; else actionHTML = `<button class="sky-shop-btn buy-btn ${disableBtn}" ${!disableBtn ? `onclick="window.buySkyItem('${s.id}', 'skin')"` : ''}>${s.price} 💰 BUY</button>`; }
-                    div.innerHTML = `<div class="card-img-wrap"><img src="${s.imageUrl}" class="card-img ${unlocked?'':'locked-img'}"></div><div class="card-info"><div class="card-title" ${s.secret?'style="color:#ff7a7a;"':''}>${s.name}</div><div class="card-desc">${s.secret ? 'RESTRICTED CLEARANCE.' : 'Visual plating.'}</div>${unlocked ? '<div class="card-price free">UNLOCKED</div>' : `<div class="card-price" ${s.secret?'style="color:#ff7a7a;"':''}>${s.price} 💰</div>`}</div><div class="card-actions">${actionHTML}</div>`;
-                    shopContentArea.appendChild(div);
-                  });
-                } else if (currentShopTab === 'upgrades') {
-                   const div = document.createElement('div'); div.className = `skyfall-shop-card ${extraLifeUses > 0 ? 'equipped' : ''}`;
-                   let actionHTML = `<button class="sky-shop-btn buy-btn" onclick="window.buySkyItem('extralife', 'upgrade')">350 💰 BUY</button>`;
-                   div.innerHTML = `<div class="card-img-wrap" style="font-size: 32px; filter: drop-shadow(0 0 10px #ff3b4e);">❤️</div><div class="card-info"><div class="card-title">EXTRA LIFE</div><div class="card-desc">Start with +1 Extra Life automatically.</div><div class="card-desc" style="color:var(--neon-cyan); margin-top:2px;">Lasts for 5 matches!</div>${extraLifeUses > 0 ? `<div class="upgrade-active-badge">ACTIVE: ${extraLifeUses} MATCHES LEFT</div>` : `<div class="card-price">350 💰</div>`}</div><div class="card-actions">${actionHTML}</div>`;
-                   shopContentArea.appendChild(div);
+            window.simonClick = function(i) {
+                const st = state.games.simon;
+                if(!st.active || !st.clickable) return;
+                
+                simonLight(i);
+                
+                if(i === st.seq[st.step]) {
+                    st.step++;
+                    if(st.step === st.seq.length) {
+                        st.clickable = false;
+                        st.pts += 5; // خمس نقاط لكل مرحلة מתجاوزة
+                        document.getElementById('simon-score').textContent = st.pts + ' 🌟';
+                        setTimeout(() => simonNextRound(), 1000);
+                    }
+                } else {
+                    st.active = false; st.clickable = false;
+                    fx.play('lose');
+                    document.getElementById('simon-score').textContent = "خسرت!";
+                    if(st.pts > 0) bcastScore('الذاكرة الصوتية 🎵', 'SIMON', st.pts);
+                    setTimeout(forceCloseGame, 2000);
                 }
-              }
-              function switchTab(tabId) { sfx.click(); shopTabs.forEach(btn => btn.classList.remove('active')); document.querySelector(`[data-target="${tabId}"]`).classList.add('active'); shopContentArea.classList.add('fade'); setTimeout(() => { currentShopTab = tabId; renderShopContent(); shopContentArea.classList.remove('fade'); }, 200); }
-              shopTabs.forEach(btn => { btn.addEventListener('click', (e) => { const target = e.target.getAttribute('data-target'); if(currentShopTab !== target) switchTab(target); }); });
-              function showShopUnlockEffect(){ const flash = document.createElement('div'); flash.style.cssText='position:absolute;inset:0;background:rgba(94,241,255,0.15);pointer-events:none;z-index:100;animation:unlockFlash 0.5s ease-out forwards;'; const style = document.createElement('style'); style.textContent='@keyframes unlockFlash{0%{opacity:1;}100%{opacity:0;}}'; document.head.appendChild(style); shopOverlay.appendChild(flash); setTimeout(()=>flash.remove(), 500); }
-              function openShop(){ sfx.click(); updateSkyCurrencyUI(); renderShopContent(); shopOverlay.classList.add('visible'); }
-              function closeShop(){ sfx.click(); shopOverlay.classList.remove('visible'); applyEquippedSkin(); buildBackground(); }
+            };
 
-              document.getElementById('shopCloseBtn').addEventListener('click', closeShop); document.getElementById('shopBtnStart').addEventListener('click',(e)=>{ e.stopPropagation(); openShop(); }); document.getElementById('shopBtnOver').addEventListener('click',(e)=>{ e.stopPropagation(); openShop(); });
-              window.buySkyItem = buySkyItem; window.equipSkyItem = equipSkyItem; window.triggerSecretSkinUnlock = triggerSecretSkinUnlock;
-
-              const CHEAT_PASSWORD = 'morhafali123321'; const CHEAT_HEIDI = 'flappyheidi'; const CHEAT_SHASHO = 'flappyshasho';
-              const cheatModal = document.getElementById('cheatModal'); const cheatInput = document.getElementById('cheatInput'); const cheatMsg = document.getElementById('cheatMsg'); let cheatUsed = (localStorage.getItem('skyfall_cheat_used') === 'true');
-              function openCheat(){ cheatInput.value=''; cheatMsg.textContent=''; cheatMsg.className='cheat-msg'; cheatInput.className='cheat-input'; cheatModal.classList.remove('hidden'); setTimeout(()=>cheatInput.focus(),100); }
-              function closeCheat(){ cheatModal.classList.add('hidden'); }
-              function submitCheat(){
-                const val = cheatInput.value.toLowerCase().trim();
-                if(val === CHEAT_PASSWORD){
-                  if(cheatUsed){ cheatInput.className='cheat-input error'; cheatMsg.className='cheat-msg err'; cheatMsg.textContent='CHEAT ALREADY USED'; return; }
-                  cheatUsed = true; localStorage.setItem('skyfall_cheat_used','true'); cheatInput.className='cheat-input success'; cheatMsg.className='cheat-msg ok'; cheatMsg.textContent='⚡ CHEAT ACTIVATED — +9999 POINTS ⚡'; addCurrency(9999); playCheatSuccessSound(); spawnCheatParticles('#5ef1ff'); setTimeout(()=> closeCheat(), 2200);
-                } else if(val === CHEAT_HEIDI) {
-                  if(heidiUnlocked){ cheatInput.className='cheat-input error'; cheatMsg.className='cheat-msg err'; cheatMsg.textContent='SECRET ALREADY UNLOCKED'; return; }
-                  heidiUnlocked = true; equippedTheme = 'theme_heidi'; saveData(); applyEquippedSkin(); cheatInput.className='cheat-input success-pink'; cheatMsg.className='cheat-msg ok-pink'; cheatMsg.textContent='🌸 FLAPPY HEIDI UNLOCKED 🌸'; playCheatSuccessSound(); spawnCheatParticles('#ff69b4'); setTimeout(()=> { closeCheat(); showShopMsg('SECRET THEME EQUIPPED!', true); }, 2200);
-                } else if (val === CHEAT_SHASHO) {
-                  if(shashoUnlocked){ cheatInput.className='cheat-input error'; cheatMsg.className='cheat-msg err'; cheatMsg.textContent='SECRET ALREADY UNLOCKED'; return; }
-                  shashoUnlocked = true; equippedTheme = 'theme_shasho'; saveData(); applyEquippedSkin(); cheatInput.className='cheat-input success-gold'; cheatMsg.className='cheat-msg ok-gold'; cheatMsg.textContent='💪 SHASHO GYM UNLOCKED 💪'; playCheatSuccessSound(); spawnCheatParticles('#ffd700'); setTimeout(()=> { closeCheat(); showShopMsg('SECRET THEME EQUIPPED!', false, true); }, 2200);
-                } else { cheatInput.className='cheat-input error'; cheatMsg.className='cheat-msg err'; cheatMsg.textContent='ACCESS DENIED'; playCheatDenySound(); setTimeout(()=>{ cheatInput.className='cheat-input'; }, 600); }
-              }
-              function playCheatSuccessSound(){ if(!actx||muted) return; [523,659,784,1047].forEach((f,i)=>{ const t0=actx.currentTime+i*0.08; const o=actx.createOscillator(); const g=actx.createGain(); o.type='square'; o.frequency.setValueAtTime(f,t0); g.gain.setValueAtTime(0.12,t0); g.gain.exponentialRampToValueAtTime(0.001,t0+0.2); o.connect(g); g.connect(masterGain); o.start(t0); o.stop(t0+0.22); }); }
-              function playCheatDenySound(){ if(!actx||muted) return; const t0=actx.currentTime; const o=actx.createOscillator(); const g=actx.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(220,t0); o.frequency.exponentialRampToValueAtTime(80,t0+0.3); g.gain.setValueAtTime(0.18,t0); g.gain.exponentialRampToValueAtTime(0.001,t0+0.35); o.connect(g); g.connect(masterGain); o.start(t0); o.stop(t0+0.38); }
-              function spawnCheatParticles(forceColor = null){ const container = document.getElementById('cheatParticles'); for(let i=0;i<30;i++){ const p = document.createElement('div'); const size = 4 + Math.random()*6; const x = Math.random()*100; const col = forceColor || (Math.random()<0.5 ? '#5ef1ff' : '#ffb648'); p.style.cssText=`position:absolute;width:${size}px;height:${size}px;background:${col};border-radius:50%;left:${x}%;top:100%;animation:cheatPtcl ${0.6+Math.random()*0.8}s ease-out ${Math.random()*0.3}s forwards;box-shadow:0 0 6px ${col};`; container.appendChild(p); setTimeout(()=>p.remove(),1500); } if(!document.getElementById('cheatPtclStyle')){ const s=document.createElement('style'); s.id='cheatPtclStyle'; s.textContent='@keyframes cheatPtcl{0%{transform:translateY(0) scale(1);opacity:1;}100%{transform:translateY(-200px) scale(0);opacity:0;}}'; document.head.appendChild(s); } }
-
-              document.getElementById('cheatSubmitBtn').addEventListener('click',()=>{ initAudio(); submitCheat(); }); document.getElementById('cheatCloseBtn').addEventListener('click',()=>closeCheat()); cheatInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ initAudio(); submitCheat(); }}); document.getElementById('cheatBtnStart').addEventListener('click',(e)=>{ e.stopPropagation(); initAudio(); openCheat(); }); document.getElementById('cheatBtnShop').addEventListener('click',(e)=>{ e.stopPropagation(); initAudio(); openCheat(); });
-
-              document.getElementById('deleteDataBtn').addEventListener('click', (e) => { e.stopPropagation(); initAudio(); sfx.click(); if(confirm("Are you sure you want to delete all data and start from zero? This cannot be undone.")){ localStorage.removeItem('skyfall_best'); localStorage.removeItem('skyfall_currency'); localStorage.removeItem('skyfall_themes'); localStorage.removeItem('skyfall_eq_theme'); localStorage.removeItem('skyfall_skins'); localStorage.removeItem('skyfall_eq_skin'); localStorage.removeItem('skyfall_extralife'); localStorage.removeItem('skyfall_heidi_unlocked'); localStorage.removeItem('skyfall_shasho_unlocked'); localStorage.removeItem('skyfall_cheat_used'); location.reload(); } });
-
-            }; // نهاية initSkyfall
         });
     </script>
 </body>
